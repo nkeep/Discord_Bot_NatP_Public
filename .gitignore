@@ -1,0 +1,7 @@
+*.db
+*.db-journal
+__pycache__
+*.txt
+/lib/files
+config.py
+client_secret.json
