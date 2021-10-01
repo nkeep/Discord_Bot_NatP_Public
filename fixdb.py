@@ -21,13 +21,12 @@ data_list = cur.fetchall()
 
 for data in data_list:
     if data[2] == 1: #is file
-        new = data[1].replace("\\", "/")
-        new = new.replace("files", "files/db")
+        new = data[1].replace("Discord_bot_Nat", "Discord_Bot_NatP_Public")
         cur.execute(f"UPDATE db SET result='{new}' WHERE name='{data[0]}'")
 
 cur.execute("SELECT * FROM templates")
 data_list = cur.fetchall()
 
 for data in data_list:
-    new = data[1].replace("\\","/")
+    new = data[1].replace("Discord_bot_Nat", "Discord_Bot_NatP_Public")
     cur.execute(f"UPDATE templates SET filelocation='{new}' WHERE name='{data[0]}'")
