@@ -69,7 +69,7 @@ class Reminder(Cog):
                 reminder = data.split(' ', 2)
                 id = db.record(f"INSERT INTO reminders (year, month, day, hour, minute, reminder, username, channel) VALUES('{year}', '{month}', '{day}', '{hour}', '{minute}', '{reminder[2]}', '{ctx.author.id}', '{channel}') RETURNING id")
                 id = id[0]
-                self.bot.scheduler.add_job(self.notify_reminder, CronTrigger(minute=int(minute), hour=int(hour), day=int(day), month=int(month), year=int(year)), [id], id=str(id))
+                self.bot.scheduler.add_job(self.notify_reminder, CronTrigger(minute=int(minute), hour=int(hour), day=int(day), month=int(month), year=int(year)), [id], id=str(id) + "reminder")
 
                 await ctx.send(f"Successfully added reminder for {month}/{day}/{year} at {hour}:{minute}")
             except Exception as e:
@@ -105,7 +105,7 @@ class Reminder(Cog):
                 rtime = now + timedelta(hours=int(hour), minutes=int(minute), days=int(day))
                 id = db.record(f"INSERT INTO reminders (year, month, day, hour, minute, reminder, username, channel) VALUES('{rtime.year}', '{rtime.month}', '{rtime.day}', '{rtime.hour}', '{rtime.minute}', '{reminder}', '{ctx.author.id}', '{channel}') RETURNING id")
                 id = id[0]
-                self.bot.scheduler.add_job(self.notify_reminder, CronTrigger(minute=rtime.minute, hour=rtime.hour, day=rtime.day, month=rtime.month, year=rtime.year), [id], id=str(id))
+                self.bot.scheduler.add_job(self.notify_reminder, CronTrigger(minute=rtime.minute, hour=rtime.hour, day=rtime.day, month=rtime.month, year=rtime.year), [id], id=str(id) + "reminder")
                 await ctx.send(f"Successfully added reminder for {rtime.month}/{rtime.day}/{rtime.year} at {rtime.hour}:{rtime.minute}")
             except Exception as e:
                 await print(e)
@@ -117,7 +117,7 @@ class Reminder(Cog):
         channel = self.bot.get_channel(int(reminder[8]))
         await channel.send(f"<@!{reminder[7]}> {reminder[6]}")
         try:
-            self.bot.scheduler.remove_job(str(id)) #Remove the job
+            self.bot.scheduler.remove_job(str(id) + "reminder") #Remove the job
         except:
             pass
         db.execute(f"DELETE FROM reminders WHERE id = '{id}'") #Remove from db

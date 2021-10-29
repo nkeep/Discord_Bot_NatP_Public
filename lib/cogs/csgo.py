@@ -22,7 +22,7 @@ class CSGO(Cog):
         for match in all_matches:
             id = match[0]
             match = json.loads(match[1])
-            self.bot.scheduler.add_job(self.notify_match, CronTrigger(minute=match["time"][3:5], hour=match["time"][0:2], day=match["date"][8:10], month=match["date"][5:7]), id=str(id))
+            self.bot.scheduler.add_job(self.notify_match, CronTrigger(minute=match["time"][3:5], hour=match["time"][0:2], day=match["date"][8:10], month=match["date"][5:7]), id=str(id) + "csgo")
             important_matches.append(match.copy())
         print(important_matches)
 
@@ -49,7 +49,7 @@ class CSGO(Cog):
                     important_matches.append(match.copy())
                     db.execute(f"INSERT INTO csgo (data) VALUES('{json.dumps(match)}')")
                     id = db.field(f"SELECT id FROM csgo WHERE data = '{json.dumps(match)}'")
-                    self.bot.scheduler.add_job(self.notify_match, CronTrigger(minute=match["time"][3:5], hour=match["time"][0:2], day=match["date"][8:10], month=match["date"][5:7]), id=str(id))
+                    self.bot.scheduler.add_job(self.notify_match, CronTrigger(minute=match["time"][3:5], hour=match["time"][0:2], day=match["date"][8:10], month=match["date"][5:7]), id=str(id) + "csgo")
 
     async def notify_match(self):
         global important_matches
@@ -58,7 +58,7 @@ class CSGO(Cog):
         data = json.loads(match[1])
         db.execute(f"DELETE FROM csgo WHERE id = '{id}'") #remove from db
         channel = self.bot.get_channel(497223372355272714) #bot channel in ss gang
-        self.bot.scheduler.remove_job(str(id)) #Remove the job
+        self.bot.scheduler.remove_job(str(id) + "csgo") #Remove the job
         important_matches.pop(0) #remove from list
         await channel.send(f"New CSGO match, {data['team1']} vs {data['team2']} <@!143919895694802944>")
 
