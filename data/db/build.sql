@@ -1,6 +1,7 @@
 CREATE TABLE IF NOT EXISTS guilds (
 	GuildID bigint PRIMARY KEY,
-	Prefix text DEFAULT '+'
+	Prefix text DEFAULT '+',
+	reminderchannel bigint
 );
 
 CREATE TABLE IF NOT EXISTS exp (
@@ -40,4 +41,16 @@ CREATE TABLE IF NOT EXISTS sb(
 CREATE TABLE IF NOT EXISTS csgo(
 	id BIGSERIAL PRIMARY KEY,
 	data text
+);
+
+CREATE TABLE IF NOT EXISTS reminders(
+	id BIGSERIAL PRIMARY KEY,
+	year int,
+	month int,
+	day int,
+	hour int,
+	minute int,
+	reminder text,
+	username bigint,
+	channel bigint
 );
