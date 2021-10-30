@@ -39,7 +39,9 @@ class Reminder(Cog):
     @command(name="remindme")
     async def remindme(self, ctx, *, data):
         arr = data.split()
-        time_data = ' '.join(arr[:3]) + " " #get the first 3 words
+        time_data = re.search('(\d+(d|h|m) ){1,3}', data, re.IGNORECASE)
+        if time_data:
+            time_data = time_data.group()
 
         channel = ""
         try:
@@ -67,6 +69,7 @@ class Reminder(Cog):
                 hour = split_time[0]
                 minute = split_time[1]
                 reminder = data.split(' ', 2)
+                reminder[2] = reminder[2].replace('%', '%%')
                 id = db.record(f"INSERT INTO reminders (year, month, day, hour, minute, reminder, username, channel) VALUES('{year}', '{month}', '{day}', '{hour}', '{minute}', '{reminder[2]}', '{ctx.author.id}', '{channel}') RETURNING id")
                 id = id[0]
                 self.bot.scheduler.add_job(self.notify_reminder, CronTrigger(minute=int(minute), hour=int(hour), day=int(day), month=int(month), year=int(year)), [id], id=str(id) + "reminder")
@@ -100,9 +103,11 @@ class Reminder(Cog):
                 else:
                     minute = "0"
                 reminder = ' '.join(data.split()[num_params:]) #Grab everything that's not part of the time
+                reminder = reminder.replace('%', "%%") #Holy shit it took a long time to find this, makes it so you can input a % sign
 
                 now = datetime.now()
                 rtime = now + timedelta(hours=int(hour), minutes=int(minute), days=int(day))
+
                 id = db.record(f"INSERT INTO reminders (year, month, day, hour, minute, reminder, username, channel) VALUES('{rtime.year}', '{rtime.month}', '{rtime.day}', '{rtime.hour}', '{rtime.minute}', '{reminder}', '{ctx.author.id}', '{channel}') RETURNING id")
                 id = id[0]
                 self.bot.scheduler.add_job(self.notify_reminder, CronTrigger(minute=rtime.minute, hour=rtime.hour, day=rtime.day, month=rtime.month, year=rtime.year), [id], id=str(id) + "reminder")
