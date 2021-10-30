@@ -12,7 +12,7 @@ important_matches = []
 class CSGO(Cog):
     def __init__(self, bot):
         self.bot = bot
-        bot.scheduler.add_job(self.look_for_matches, CronTrigger(hour="0", minute="0"))
+        bot.scheduler.add_job(self.look_for_matches, CronTrigger(minute="0"))
         self.get_db_matches()
         self.look_for_matches()
 
