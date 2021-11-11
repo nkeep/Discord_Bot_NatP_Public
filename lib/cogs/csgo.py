@@ -32,7 +32,7 @@ class CSGO(Cog):
 
         matches = hltv.get_matches()
         for match in matches:
-            if match["team1"] == b"Liquid" or match["team2"] == b"Liquid":
+            if match["team1"] == b"Liquid" or match["team2"] == b"Liquid" or match["team1"] == b"Kings of Content" or match["team2"] == b"Kings of Content":
                 #convert bytes like objects to strings
                 match["event"] = match["event"].decode()
                 match["team1"] = match["team1"].decode()
