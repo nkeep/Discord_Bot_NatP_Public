@@ -12,7 +12,7 @@ important_matches = []
 class CSGO(Cog):
     def __init__(self, bot):
         self.bot = bot
-        bot.scheduler.add_job(self.look_for_matches, CronTrigger(hour="0", minute="0"))
+        bot.scheduler.add_job(self.look_for_matches, CronTrigger(minute="0"))
         self.get_db_matches()
         self.look_for_matches()
 
@@ -32,7 +32,7 @@ class CSGO(Cog):
 
         matches = hltv.get_matches()
         for match in matches:
-            if match["team1"] == b"Liquid" or match["team2"] == b"Liquid":
+            if match["team1"] == b"Liquid" or match["team2"] == b"Liquid" or match["team1"] == b"Kings of Content" or match["team2"] == b"Kings of Content":
                 #convert bytes like objects to strings
                 match["event"] = match["event"].decode()
                 match["team1"] = match["team1"].decode()
