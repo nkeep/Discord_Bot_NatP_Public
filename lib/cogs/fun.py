@@ -49,6 +49,17 @@ class Fun(Cog):
         list = db.column("SELECT quote from sb")
         await ctx.send(list[randint(0, len(list))])
 
+    @command(name="funny")
+    async def funny(self, ctx): #Select a random 'funny' command from the db
+        all_funnies = db.records("SELECT * FROM db WHERE name LIKE 'funny%%'")
+        i = randint(0, len(all_funnies) - 1)
+        funny = all_funnies[i]
+        if funny[2] == 1:
+            location = funny[1]
+            await ctx.send(file=File(rf'{location}'))
+        else:
+            await ctx.send(funny[1])
+
     @Cog.listener("on_message")
     async def on_message(self, message):
 
