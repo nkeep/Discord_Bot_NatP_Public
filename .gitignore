@@ -5,3 +5,4 @@ __pycache__
 /lib/files
 config.py
 client_secret.json
+nohup.out

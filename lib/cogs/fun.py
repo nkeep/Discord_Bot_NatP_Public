@@ -1,5 +1,5 @@
 from discord.ext.commands import Cog, command, BadArgument
-from discord import Member
+from discord import Member, File
 from discord.errors import HTTPException
 from typing import Optional
 from random import choice, randint
@@ -64,8 +64,7 @@ class Fun(Cog):
     async def on_message(self, message):
 
         if message.content.startswith('!play') and message.channel.id != 505589070378958850:
-            await message.author.kick(reason="Don't type !play in the non bot-shit channel retard")
-            await message.channel.send('fuck you')
+            await message.author.kick(reason="Don't type !play in the non bot channel idiot")
 
         elif re.search("update for", message.content, re.IGNORECASE):
             if randint(1,6) == 6:
