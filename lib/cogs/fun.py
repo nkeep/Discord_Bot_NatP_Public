@@ -60,6 +60,17 @@ class Fun(Cog):
         else:
             await ctx.send(funny[1])
 
+    @command(name="who")
+    async def who(self, ctx): #Select a random 'who' command from the db
+        all_whos = db.records("SELECT * FROM db WHERE name LIKE 'who%%'")
+        i = randint(0, len(all_whos) - 1)
+        who = all_whos[i]
+        if who[2] == 1:
+            location = who[1]
+            await ctx.send(file=File(rf'{location}'))
+        else:
+            await ctx.send(who[1])
+
     @Cog.listener("on_message")
     async def on_message(self, message):
 
