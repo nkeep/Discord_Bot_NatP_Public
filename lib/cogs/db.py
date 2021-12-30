@@ -5,6 +5,7 @@ from typing import Optional
 
 from ..db import db
 
+import math
 import requests
 import uuid
 import shutil
@@ -102,8 +103,10 @@ class DB(Cog):
     @command(name="dblist")
     async def dblist(self, ctx):
         try:
-            list = db.column(f"SELECT * from db")
-            await ctx.send(list)
+            list = str(db.column(f"SELECT * from db"))
+            for i in range(math.ceil(len(list)/2000)): #if the list is more than 2k chars, split it up into multiple messages
+                await ctx.send(list[i*2000:(i+1)*2000])
+            #await ctx.send(str(list))
         except:
             print("dblist command failed")
 
