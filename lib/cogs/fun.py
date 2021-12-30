@@ -4,12 +4,20 @@ from discord.errors import HTTPException
 from typing import Optional
 from random import choice, randint
 import requests
+import json
 import re
 import os
 
 from ..db import db
 
 from config import CATAPI_KEY
+
+path_separator = "/"
+if os.name == 'nt':
+    path_separator = "\\"
+
+THIS_FOLDER = os.path.dirname(os.path.abspath(__file__))
+root = os.path.join(THIS_FOLDER, ".." + path_separator + ".." + path_separator)
 
 class Fun(Cog):
     def __init__(self, bot):
@@ -48,6 +56,13 @@ class Fun(Cog):
     async def sb(self, ctx):
         list = db.column("SELECT quote from sb")
         await ctx.send(list[randint(0, len(list))])
+
+    @command(name="trump")
+    async def trump(self, ctx):
+        f = open(root + "trumptweets.json")
+        all_tweets = json.loads(f.read())
+        await ctx.send(all_tweets[randint(0, len(all_tweets) - 1)])
+
 
     @command(name="funny")
     async def funny(self, ctx): #Select a random 'funny' command from the db
