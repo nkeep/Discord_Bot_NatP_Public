@@ -9,4 +9,4 @@ nohup.out
 natp-env
 
 # Allow
-requirements.txt
+!requirements.txt
