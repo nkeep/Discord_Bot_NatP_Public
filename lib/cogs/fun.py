@@ -1,9 +1,10 @@
 from discord.ext.commands import Cog, command, BadArgument
-from discord import Member, File
+from discord import Member, File, FFmpegPCMAudio
 from discord.errors import HTTPException
 from typing import Optional
 from random import choice, randint
 import requests
+import time
 import json
 import re
 import os
@@ -18,6 +19,8 @@ if os.name == 'nt':
 
 THIS_FOLDER = os.path.dirname(os.path.abspath(__file__))
 root = os.path.join(THIS_FOLDER, ".." + path_separator + ".." + path_separator)
+files = os.path.join(THIS_FOLDER, ".." + path_separator + "files" + path_separator)
+
 
 class Fun(Cog):
     def __init__(self, bot):
@@ -85,6 +88,24 @@ class Fun(Cog):
             await ctx.send(file=File(rf'{location}'))
         else:
             await ctx.send(who[1])
+
+    @command(name="truevoice")
+    async def truevoice(self, ctx):
+        try:
+            voice_channel = ctx.author.voice.channel
+            if voice_channel != None:
+                vc = await voice_channel.connect()
+                vc.play(FFmpegPCMAudio(source=files+"truevoice.mp3"))
+                # Sleep while audio is playing.
+                while vc.is_playing():
+                    time.sleep(.1)
+                await vc.disconnect()
+            else:
+                await ctx.send(str(ctx.author.name) + "is not in a channel.")
+            # Delete command after the audio is done playing.
+            await ctx.message.delete()
+        except Exception as e:
+            print(e)
 
     @Cog.listener("on_message")
     async def on_message(self, message):

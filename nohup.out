@@ -23738,3 +23738,68 @@ db command called
 True aaaaaaaaaaaand... Yeah, that's pretty true. That's true and- yeah that's true. That's true. That's true- That's pretty true. That's pretty true, I mean-... That's true. Yeah. That's true. Uhm- That's true. That's fuckin' true. Uhm... That's how it is dude
 +
 db command called
+/home/nkeep/Discord_Bot_NatP_Public/lib/bot/../cogs/*.py
+['mc', 'misc', 'reminder', 'db', 'csgo', 'fun', 'music', 'meme']
+running setup
+['mc', 'misc', 'reminder', 'db', 'csgo', 'fun', 'music', 'meme']
+14:24:42
+mc cog loaded
+misc cog loaded
+reminder cog loaded
+db cog loaded
+[{'date': '2021-12-17', 'time': '12:30', 'event': 'BLAST Premier World Final 2021', 'team1': 'Astralis', 'team2': 'Liquid'}, {'date': '2021-12-17', 'time': '14:00', 'event': 'BLAST Premier World Final 2021', 'team1': 'Astralis', 'team2': 'Liquid'}, {'date': '2021-12-18', 'time': '12:30', 'event': 'BLAST Premier World Final 2021', 'team1': 'Natus Vincere', 'team2': 'Liquid'}]
+csgo cog loaded
+fun cog loaded
+music cog loaded
+meme cog loaded
+setup complete
+running bot...
+bot connected
+mc cog ready
+misc cog ready
+reminder cog ready
+db cog ready
+csgo cog ready
+fun cog ready
+meme cog ready
+ Wavelink node `MAIN` ready.
+.
+something
+1-154, 2020
++
+something
+1-154, 2020
++
++
+.
+.
+.
+.
+.
++
++
+something
+.
+something
+1-155, 2020
++
+something
+1-155, 2020
+/home/nkeep/Discord_Bot_NatP_Public/lib/bot/../pfps/nat1.jpg
+/home/nkeep/Discord_Bot_NatP_Public/lib/bot/../pfps/nat1.jpg
+.
+db command called
+/home/nkeep/Discord_Bot_NatP_Public/lib/cogs/../files/db/6f38e208-528c-4d55-9259-fa4430ce61fc.mp4
+/home/nkeep/Discord_Bot_NatP_Public/lib/bot/../pfps/nat10.jpg
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7ff0de690a60>
+Exception ignored in: <function ClientResponse.__del__ at 0x7ff0e2067790>
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.9/dist-packages/aiohttp/client_reqrep.py", line 803, in __del__
+  File "/usr/local/lib/python3.9/dist-packages/aiohttp/connector.py", line 170, in release
+  File "/usr/local/lib/python3.9/dist-packages/aiohttp/connector.py", line 650, in _release
+  File "/usr/local/lib/python3.9/dist-packages/aiohttp/client_proto.py", line 63, in close
+  File "/usr/lib/python3.9/asyncio/selector_events.py", line 700, in close
+  File "/usr/lib/python3.9/asyncio/base_events.py", line 746, in call_soon
+  File "/usr/lib/python3.9/asyncio/base_events.py", line 510, in _check_closed
+RuntimeError: Event loop is closed

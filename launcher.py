@@ -1,6 +1,6 @@
 from lib.bot import bot
 
-VERSION = "1.6"
+VERSION = "1.7"
 
 bot.run(VERSION)
 
@@ -10,3 +10,4 @@ bot.run(VERSION)
 #1.4    Add memetext command for Joe
 #1.5    Add trump command
 #1.6    Alter dblist and add funnylist, wholist, addfunny, and addwho commands
+#1.7    Add truevoice command
