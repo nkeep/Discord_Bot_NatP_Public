@@ -6,3 +6,7 @@ __pycache__
 config.py
 client_secret.json
 nohup.out
+natp-env
+
+# Allow
+!requirements.txt
