@@ -117,12 +117,12 @@ class DB(Cog):
     async def funnylist(self, ctx):
         print('something')
         try:
-            list = db.column("SELECT name FROM db WHERE name LIKE 'funny%%' ORDER BY name ASC")
-            output = "1-"
+            list = db.column("SELECT REGEXP_REPLACE(name, 'funny', '') FROM db WHERE name LIKE 'funny%%' ORDER BY CAST (REGEXP_REPLACE(name, 'funny', '0') AS int);")
+            output = list[1] + "-"
             prev_num = -1
             new_range = False
             for item in list:
-                num = int("0" + item.strip("funny"))
+                num = int("0" + item)
 
                 if new_range and num - prev_num == 1:
                     output += "-"
@@ -134,7 +134,7 @@ class DB(Cog):
 
                 prev_num = num
             if not new_range:
-                output += (str(list[len(list)-1])).strip("funny")
+                output += (str(list[len(list)-1]))
             print(output)
             await ctx.send(output)
         except Exception as e:
@@ -143,12 +143,12 @@ class DB(Cog):
     @command(name="wholist")
     async def wholist(self, ctx):
         try:
-            list = db.column("SELECT name FROM db WHERE name LIKE 'who%%' ORDER BY name ASC")
-            output = "1-"
+            list = db.column("SELECT REGEXP_REPLACE(name, 'who', '') FROM db WHERE name LIKE 'who%%' ORDER BY CAST (REGEXP_REPLACE(name, 'who', '0') AS int);")
+            output = list[1] + "-"
             prev_num = -1
             new_range = False
             for item in list:
-                num = int("0" + item.strip("who"))
+                num = int("0" + item)
 
                 if new_range and num - prev_num == 1:
                     output += "-"
@@ -160,7 +160,7 @@ class DB(Cog):
 
                 prev_num = num
             if not new_range:
-                output += (str(list[len(list)-1])).strip("who")
+                output += (str(list[len(list)-1]))
             await ctx.send(output)
         except:
             print("wholist command failed")
@@ -168,17 +168,17 @@ class DB(Cog):
     @command(name="addfunny")
     async def addfunny(self, ctx, *, second: Optional[str]):
         try:
-            list = db.column("SELECT name FROM db WHERE name LIKE 'funny%%' ORDER BY name ASC")
+            list = db.column("SELECT REGEXP_REPLACE(name, 'funny', '') FROM db WHERE name LIKE 'funny%%' ORDER BY CAST (REGEXP_REPLACE(name, 'funny', '0') AS int);")
             prev_num = -1
             next_num = -1
             for item in list:
-                num = int("0" + item.strip("funny"))
+                num = int("0" + item)
                 if not num - prev_num == 1:
                     next_num = prev_num + 1
                     break
                 prev_num =  num
             if next_num == -1 and len(list) > 0:
-                next_num = int((list[len(list)-1]).strip("funny")) + 1
+                next_num = int((list[len(list)-1])) + 1
             elif len(list) == 0:
                 next_num = 0
 
@@ -189,17 +189,17 @@ class DB(Cog):
     @command(name="addwho")
     async def addwho(self, ctx, *, second: Optional[str]):
         try:
-            list = db.column("SELECT name FROM db WHERE name LIKE 'who%%' ORDER BY name ASC")
+            list = db.column("SELECT REGEXP_REPLACE(name, 'who', '') FROM db WHERE name LIKE 'who%%' ORDER BY CAST (REGEXP_REPLACE(name, 'who', '0') AS int);")
             prev_num = -1
             next_num = -1
             for item in list:
-                num = int("0" + item.strip("who"))
+                num = int("0" + item)
                 if not num - prev_num == 1:
                     next_num = prev_num + 1
                     break
                 prev_num =  num
             if next_num == -1 and len(list) > 0:
-                next_num = int((list[len(list)-1]).strip("who")) + 1
+                next_num = int((list[len(list)-1])) + 1
             elif len(list) == 0:
                 next_num = 0
 
