@@ -103,12 +103,109 @@ class DB(Cog):
     @command(name="dblist")
     async def dblist(self, ctx):
         try:
-            list = str(db.column(f"SELECT * from db"))
+            #Old code
+            #list = str(db.column(f"SELECT * from db"))
+            list = str(db.column("SELECT name FROM db WHERE name NOT LIKE 'funny%%' AND name NOT LIKE 'who%%'"))
             for i in range(math.ceil(len(list)/2000)): #if the list is more than 2k chars, split it up into multiple messages
                 await ctx.send(list[i*2000:(i+1)*2000])
+
             #await ctx.send(str(list))
         except:
             print("dblist command failed")
+
+    @command(name="funnylist")
+    async def funnylist(self, ctx):
+        print('something')
+        try:
+            list = db.column("SELECT name FROM db WHERE name LIKE 'funny%%' ORDER BY name ASC")
+            output = "1-"
+            prev_num = -1
+            new_range = False
+            for item in list:
+                num = int("0" + item.strip("funny"))
+
+                if new_range and num - prev_num == 1:
+                    output += "-"
+                    new_range = False
+
+                if not num - prev_num == 1:
+                    output += str(prev_num) + ", " + str(num)
+                    new_range = True
+
+                prev_num = num
+            if not new_range:
+                output += (str(list[len(list)-1])).strip("funny")
+            print(output)
+            await ctx.send(output)
+        except Exception as e:
+            print(e)
+
+    @command(name="wholist")
+    async def wholist(self, ctx):
+        try:
+            list = db.column("SELECT name FROM db WHERE name LIKE 'who%%' ORDER BY name ASC")
+            output = "1-"
+            prev_num = -1
+            new_range = False
+            for item in list:
+                num = int("0" + item.strip("who"))
+
+                if new_range and num - prev_num == 1:
+                    output += "-"
+                    new_range = False
+
+                if not num - prev_num == 1:
+                    output += str(prev_num) + ", " + str(num)
+                    new_range = True
+
+                prev_num = num
+            if not new_range:
+                output += (str(list[len(list)-1])).strip("who")
+            await ctx.send(output)
+        except:
+            print("wholist command failed")
+
+    @command(name="addfunny")
+    async def addfunny(self, ctx, *, second: Optional[str]):
+        try:
+            list = db.column("SELECT name FROM db WHERE name LIKE 'funny%%' ORDER BY name ASC")
+            prev_num = -1
+            next_num = -1
+            for item in list:
+                num = int("0" + item.strip("funny"))
+                if not num - prev_num == 1:
+                    next_num = prev_num + 1
+                    break
+                prev_num =  num
+            if next_num == -1 and len(list) > 0:
+                next_num = int((list[len(list)-1]).strip("funny")) + 1
+            elif len(list) == 0:
+                next_num = 0
+
+            await ctx.invoke(self.bot.get_command('dbadd'), first='funny' + str(next_num), second=second)
+        except Exception as e:
+            print(e)
+
+    @command(name="addwho")
+    async def addwho(self, ctx, *, second: Optional[str]):
+        try:
+            list = db.column("SELECT name FROM db WHERE name LIKE 'who%%' ORDER BY name ASC")
+            prev_num = -1
+            next_num = -1
+            for item in list:
+                num = int("0" + item.strip("who"))
+                if not num - prev_num == 1:
+                    next_num = prev_num + 1
+                    break
+                prev_num =  num
+            if next_num == -1 and len(list) > 0:
+                next_num = int((list[len(list)-1]).strip("who")) + 1
+            elif len(list) == 0:
+                next_num = 0
+
+            await ctx.invoke(self.bot.get_command('dbadd'), first='who' + str(next_num), second=second)
+        except Exception as e:
+            print(e)
 
     @Cog.listener()
     async def on_ready(self):
