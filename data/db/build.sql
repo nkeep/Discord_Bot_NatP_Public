@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS exp (
 );
 
 CREATE TABLE IF NOT EXISTS db (
-	name text,
+	name text PRIMARY KEY,
 	result text,
 	isfile integer
 );

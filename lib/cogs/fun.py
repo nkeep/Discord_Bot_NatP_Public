@@ -66,7 +66,7 @@ class Fun(Cog):
 
     @command(name="funny")
     async def funny(self, ctx): #Select a random 'funny' command from the db
-        all_funnies = db.records("SELECT * FROM db WHERE name LIKE 'funny%%'")
+        all_funnies = db.records("SELECT * FROM db WHERE name ~ '(funny$|funny\d+)'")
         i = randint(0, len(all_funnies) - 1)
         funny = all_funnies[i]
         if funny[2] == 1:
@@ -77,7 +77,7 @@ class Fun(Cog):
 
     @command(name="who")
     async def who(self, ctx): #Select a random 'who' command from the db
-        all_whos = db.records("SELECT * FROM db WHERE name LIKE 'who%%'")
+        all_whos = db.records("SELECT * FROM db WHERE name ~ '(who$|who\d+)'")
         i = randint(0, len(all_whos) - 1)
         who = all_whos[i]
         if who[2] == 1:

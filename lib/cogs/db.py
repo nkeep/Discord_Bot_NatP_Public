@@ -105,7 +105,7 @@ class DB(Cog):
         try:
             #Old code
             #list = str(db.column(f"SELECT * from db"))
-            list = str(db.column("SELECT name FROM db WHERE name NOT LIKE 'funny%%' AND name NOT LIKE 'who%%'"))
+            list = str(db.column("SELECT name FROM db WHERE name !~ '(funny$|funny\d+)' AND name !~ '(who$|who\d+)'"))
             for i in range(math.ceil(len(list)/2000)): #if the list is more than 2k chars, split it up into multiple messages
                 await ctx.send(list[i*2000:(i+1)*2000])
 
@@ -117,7 +117,7 @@ class DB(Cog):
     async def funnylist(self, ctx):
         print('something')
         try:
-            list = db.column("SELECT REGEXP_REPLACE(name, 'funny', '') FROM db WHERE name LIKE 'funny%%' ORDER BY CAST (REGEXP_REPLACE(name, 'funny', '0') AS int);")
+            list = db.column("SELECT REGEXP_REPLACE(name, 'funny', '') FROM db WHERE name ~ '(funny$|funny\d+)' ORDER BY CAST (REGEXP_REPLACE(name, 'funny', '0') AS int)")
             output = list[1] + "-"
             prev_num = -1
             new_range = False
@@ -143,7 +143,7 @@ class DB(Cog):
     @command(name="wholist")
     async def wholist(self, ctx):
         try:
-            list = db.column("SELECT REGEXP_REPLACE(name, 'who', '') FROM db WHERE name LIKE 'who%%' ORDER BY CAST (REGEXP_REPLACE(name, 'who', '0') AS int);")
+            list = db.column("SELECT REGEXP_REPLACE(name, 'who', '') FROM db WHERE name ~ '(who$|who\d+)' ORDER BY CAST (REGEXP_REPLACE(name, 'who', '0') AS int);")
             output = list[1] + "-"
             prev_num = -1
             new_range = False
@@ -168,7 +168,7 @@ class DB(Cog):
     @command(name="addfunny")
     async def addfunny(self, ctx, *, second: Optional[str]):
         try:
-            list = db.column("SELECT REGEXP_REPLACE(name, 'funny', '') FROM db WHERE name LIKE 'funny%%' ORDER BY CAST (REGEXP_REPLACE(name, 'funny', '0') AS int);")
+            list = db.column("SELECT REGEXP_REPLACE(name, 'funny', '') FROM db WHERE name ~ '(funny$|funny\d+)' ORDER BY CAST (REGEXP_REPLACE(name, 'funny', '0') AS int);")
             prev_num = -1
             next_num = -1
             for item in list:
@@ -189,7 +189,7 @@ class DB(Cog):
     @command(name="addwho")
     async def addwho(self, ctx, *, second: Optional[str]):
         try:
-            list = db.column("SELECT REGEXP_REPLACE(name, 'who', '') FROM db WHERE name LIKE 'who%%' ORDER BY CAST (REGEXP_REPLACE(name, 'who', '0') AS int);")
+            list = db.column("SELECT REGEXP_REPLACE(name, 'who', '') FROM db WHERE name ~ '(who$|who\d+)' ORDER BY CAST (REGEXP_REPLACE(name, 'who', '0') AS int);")
             prev_num = -1
             next_num = -1
             for item in list:
