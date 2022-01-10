@@ -128,13 +128,16 @@ class DB(Cog):
                     output += "-"
                     new_range = False
 
-                if not num - prev_num == 1:
-                    output += str(prev_num) + ", " + str(num)
+                if not num - prev_num == 1 and not new_range:
+                    output += str(prev_num) + ", "
                     new_range = True
 
+                elif num-prev_num != 1 and new_range:
+                    output += str(prev_num) + ", "
+
                 prev_num = num
-            if not new_range:
-                output += (str(list[len(list)-1]))
+            
+            output += (str(list[len(list)-1]))
             print(output)
             await ctx.send(output)
         except Exception as e:
@@ -154,13 +157,16 @@ class DB(Cog):
                     output += "-"
                     new_range = False
 
-                if not num - prev_num == 1:
-                    output += str(prev_num) + ", " + str(num)
+                if not num - prev_num == 1 and not new_range:
+                    output += str(prev_num) + ", "
                     new_range = True
 
+                elif num-prev_num != 1 and new_range:
+                    output += str(prev_num) + ", "
+
                 prev_num = num
-            if not new_range:
-                output += (str(list[len(list)-1]))
+            
+            output += (str(list[len(list)-1]))
             await ctx.send(output)
         except:
             print("wholist command failed")

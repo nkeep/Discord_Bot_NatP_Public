@@ -23803,3 +23803,236 @@ Traceback (most recent call last):
   File "/usr/lib/python3.9/asyncio/base_events.py", line 746, in call_soon
   File "/usr/lib/python3.9/asyncio/base_events.py", line 510, in _check_closed
 RuntimeError: Event loop is closed
+/home/nkeep/Discord_Bot_NatP_Public/lib/bot/../cogs/*.py
+['mc', 'misc', 'reminder', 'db', 'csgo', 'fun', 'music', 'meme']
+running setup
+['mc', 'misc', 'reminder', 'db', 'csgo', 'fun', 'music', 'meme']
+15:16:44
+mc cog loaded
+misc cog loaded
+reminder cog loaded
+db cog loaded
+[{'date': '2021-12-17', 'time': '12:30', 'event': 'BLAST Premier World Final 2021', 'team1': 'Astralis', 'team2': 'Liquid'}, {'date': '2021-12-17', 'time': '14:00', 'event': 'BLAST Premier World Final 2021', 'team1': 'Astralis', 'team2': 'Liquid'}, {'date': '2021-12-18', 'time': '12:30', 'event': 'BLAST Premier World Final 2021', 'team1': 'Natus Vincere', 'team2': 'Liquid'}]
+csgo cog loaded
+fun cog loaded
+music cog loaded
+meme cog loaded
+setup complete
+running bot...
+bot connected
+mc cog ready
+misc cog ready
+reminder cog ready
+db cog ready
+csgo cog ready
+fun cog ready
+meme cog ready
+ Wavelink node `MAIN` ready.
+.
++
++
++
++
++
++
++
+db command called
+/home/nkeep/Discord_Bot_NatP_Public/lib/cogs/../files/db/1581fb81-6444-4ed1-9ee9-c7311873d6ed.png
++
++
++
++
+/home/nkeep/Discord_Bot_NatP_Public/lib/bot/../pfps/nat2.jpg
++
++
++
++
++
++
++
++
++
++
++
++
++
++
++
++
++
++
++
++
++
++
++
++
++
++
+/home/nkeep/Discord_Bot_NatP_Public/lib/bot/../pfps/nat1.jpg
++
++
++
+.
+.
+/home/nkeep/Discord_Bot_NatP_Public/lib/bot/../pfps/nat8.jpg
+/home/nkeep/Discord_Bot_NatP_Public/lib/bot/../pfps/nat10.jpg
+/home/nkeep/Discord_Bot_NatP_Public/lib/bot/../pfps/nat0.jpg
+/home/nkeep/Discord_Bot_NatP_Public/lib/bot/../pfps/nat5.jpg
+bot disconnected
++
++
++
+/home/nkeep/Discord_Bot_NatP_Public/lib/bot/../pfps/nat10.jpg
+/home/nkeep/Discord_Bot_NatP_Public/lib/bot/../pfps/nat4.jpg
+/home/nkeep/Discord_Bot_NatP_Public/lib/bot/../pfps/nat2.jpg
+/home/nkeep/Discord_Bot_NatP_Public/lib/bot/../pfps/nat10.jpg
++
++
++
++
++
++
++
++
++
++
++
+/home/nkeep/Discord_Bot_NatP_Public/lib/bot/../pfps/nat1.jpg
+/home/nkeep/Discord_Bot_NatP_Public/lib/bot/../pfps/nat1.jpg
+.
+/home/nkeep/Discord_Bot_NatP_Public/lib/bot/../pfps/nat1.jpg
+/home/nkeep/Discord_Bot_NatP_Public/lib/bot/../pfps/nat8.jpg
+/home/nkeep/Discord_Bot_NatP_Public/lib/bot/../pfps/nat0.jpg
+/home/nkeep/Discord_Bot_NatP_Public/lib/bot/../pfps/nat2.jpg
+/home/nkeep/Discord_Bot_NatP_Public/lib/bot/../pfps/nat9.jpg
++
+/home/nkeep/Discord_Bot_NatP_Public/lib/bot/../pfps/nat9.jpg
+/home/nkeep/Discord_Bot_NatP_Public/lib/bot/../pfps/nat0.jpg
+bot disconnected
+/home/nkeep/Discord_Bot_NatP_Public/lib/bot/../pfps/nat6.jpg
+bot disconnected
+/home/nkeep/Discord_Bot_NatP_Public/lib/bot/../pfps/nat10.jpg
+/home/nkeep/Discord_Bot_NatP_Public/lib/bot/../pfps/nat3.jpg
++
+/home/nkeep/Discord_Bot_NatP_Public/lib/bot/../pfps/nat10.jpg
++
++
++
++
++
++
++
++
++
++
++
++
++
++
++
++
+/home/nkeep/Discord_Bot_NatP_Public/lib/bot/../pfps/nat9.jpg
++
++
++
++
++
++
++
++
++
++
++
++
++
++
+/home/nkeep/Discord_Bot_NatP_Public/lib/bot/../pfps/nat2.jpg
++
++
++
++
++
++
++
++
++
++
++
++
++
++
++
++
++
++
+/home/nkeep/Discord_Bot_NatP_Public/lib/bot/../pfps/nat2.jpg
++
++
++
++
++
++
+/home/nkeep/Discord_Bot_NatP_Public/lib/bot/../pfps/nat9.jpg
++
+/home/nkeep/Discord_Bot_NatP_Public/lib/bot/../pfps/nat8.jpg
++
++
+db command called
+/home/nkeep/Discord_Bot_NatP_Public/lib/cogs/../files/db/63e8713f-92f4-48ef-9ffa-c54f0c000dd4.gif
++
+db command called
+/home/nkeep/Discord_Bot_NatP_Public/lib/cogs/../files/db/ead9c533-43b8-4d6b-a5c7-df6423967309.gif
++
+db command called
+https://www.youtube.com/watch?v=x1-xKbW8-DI
+bot disconnected
++
+/home/nkeep/Discord_Bot_NatP_Public/lib/bot/../pfps/nat7.jpg
++
++
++
+db command called
+<@169580269114884097>
++
++
+something
+1-156, 2020
++
++
++
++
+something
++
+something
+1-156, 166166, 2020
++
++
+something
+1-156, 166166, 2020
++
++
++
++
++
++
++
++
+db command called
+<@169580269114884097>
++
++
++
+/home/nkeep/Discord_Bot_NatP_Public/lib/bot/../pfps/nat10.jpg
+Unclosed client session
+client_session: <aiohttp.client.ClientSession object at 0x7f3d7d123550>
+Exception ignored in: <function ClientResponse.__del__ at 0x7f3d80cb2790>
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.9/dist-packages/aiohttp/client_reqrep.py", line 803, in __del__
+  File "/usr/local/lib/python3.9/dist-packages/aiohttp/connector.py", line 170, in release
+  File "/usr/local/lib/python3.9/dist-packages/aiohttp/connector.py", line 650, in _release
+  File "/usr/local/lib/python3.9/dist-packages/aiohttp/client_proto.py", line 63, in close
+  File "/usr/lib/python3.9/asyncio/selector_events.py", line 700, in close
+  File "/usr/lib/python3.9/asyncio/base_events.py", line 746, in call_soon
+  File "/usr/lib/python3.9/asyncio/base_events.py", line 510, in _check_closed
+RuntimeError: Event loop is closed
