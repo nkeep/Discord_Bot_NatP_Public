@@ -119,7 +119,7 @@ class Fun(Cog):
 
     @Cog.listener("on_message_edit")
     async def on_message_edit(self, before, after):
-        if re.search("update for", message.content, re.IGNORECASE):
+        if re.search("update for", after.content, re.IGNORECASE):
             await after.channel.send("don't care, didn't ask, plus ratio")
 
     @Cog.listener()
