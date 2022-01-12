@@ -117,6 +117,11 @@ class Fun(Cog):
             if randint(1,6) == 6:
                 await message.channel.send("don't care, didn't ask, plus ratio")
 
+    @Cog.listener("on_message_edit")
+    async def on_message_edit(self, before, after):
+        if "update for" in after.content:
+            await after.channel.send("don't care, didn't ask, plus ratio")
+
     @Cog.listener()
     async def on_ready(self):
         if not self.bot.ready:

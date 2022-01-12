@@ -1,6 +1,6 @@
 from lib.bot import bot
 
-VERSION = "1.7"
+VERSION = "1.8"
 
 bot.run(VERSION)
 
@@ -11,3 +11,4 @@ bot.run(VERSION)
 #1.5    Add trump command
 #1.6    Alter dblist and add funnylist, wholist, addfunny, and addwho commands
 #1.7    Add truevoice command
+#1.8    Increase ratioing awareness >:)
