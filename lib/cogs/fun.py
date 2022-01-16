@@ -113,13 +113,13 @@ class Fun(Cog):
         if message.content.startswith('!play') and message.channel.id != 505589070378958850:
             await message.author.kick(reason="Don't type !play in the non bot channel idiot")
 
-        elif re.search("update for", message.content, re.IGNORECASE):
+        elif re.search("u+p+d+[a4]+t+e+ +(4|f[o0]r)", message.content, re.IGNORECASE):
             if randint(1,6) == 6:
                 await message.channel.send("don't care, didn't ask, plus ratio")
 
     @Cog.listener("on_message_edit")
     async def on_message_edit(self, before, after):
-        if re.search("update for", after.content, re.IGNORECASE):
+        if re.search("u+p+d+[a4]+t+e+ +(4|f[o0]r)", after.content, re.IGNORECASE):
             await after.channel.send("don't care, didn't ask, plus ratio")
 
     @Cog.listener()
