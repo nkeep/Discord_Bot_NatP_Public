@@ -69,14 +69,15 @@ class Fun(Cog):
 
     @command(name="funny")
     async def funny(self, ctx): #Select a random 'funny' command from the db
-        all_funnies = db.records("SELECT * FROM db WHERE name ~ '(funny$|funny\d+)'")
-        i = randint(0, len(all_funnies) - 1)
-        funny = all_funnies[i]
-        if funny[2] == 1:
-            location = funny[1]
-            await ctx.send(file=File(rf'{location}'))
-        else:
-            await ctx.send(funny[1])
+        if ctx.channel.id == 220180534129590273 or ctx.channel.id == 505589070378958850:
+            all_funnies = db.records("SELECT * FROM db WHERE name ~ '(funny$|funny\d+)'")
+            i = randint(0, len(all_funnies) - 1)
+            funny = all_funnies[i]
+            if funny[2] == 1:
+                location = funny[1]
+                await ctx.send(file=File(rf'{location}'))
+            else:
+                await ctx.send(funny[1])
 
     @command(name="who")
     async def who(self, ctx): #Select a random 'who' command from the db
