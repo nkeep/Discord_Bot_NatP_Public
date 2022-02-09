@@ -18,6 +18,8 @@ if os.name == 'nt':
 THIS_FOLDER = os.path.dirname(os.path.abspath(__file__))
 files = os.path.join(THIS_FOLDER, ".." + path_separator + "files" + path_separator + "db" + path_separator)
 
+bot_channels = [505589070378958850, 871493456021835797]
+
 class DB(Cog):
     def __init__(self, bot):
     	self.bot = bot
@@ -102,16 +104,19 @@ class DB(Cog):
 
     @command(name="dblist")
     async def dblist(self, ctx):
-        try:
-            #Old code
-            #list = str(db.column(f"SELECT * from db"))
-            list = str(db.column("SELECT name FROM db WHERE name !~ '(funny$|funny\d+)' AND name !~ '(who$|who\d+)'"))
-            for i in range(math.ceil(len(list)/2000)): #if the list is more than 2k chars, split it up into multiple messages
-                await ctx.send(list[i*2000:(i+1)*2000])
+        if ctx.channel.id in bot_channels:
+            try:
+                #Old code
+                #list = str(db.column(f"SELECT * from db"))
+                list = str(db.column("SELECT name FROM db WHERE name !~ '(funny$|funny\d+)' AND name !~ '(who$|who\d+)'"))
+                for i in range(math.ceil(len(list)/2000)): #if the list is more than 2k chars, split it up into multiple messages
+                    await ctx.send(list[i*2000:(i+1)*2000])
 
-            #await ctx.send(str(list))
-        except:
-            print("dblist command failed")
+                #await ctx.send(str(list))
+            except:
+                print("dblist command failed")
+        else:
+            await ctx.send("You can only use this command in the bot channel")
 
     @command(name="funnylist")
     async def funnylist(self, ctx):
