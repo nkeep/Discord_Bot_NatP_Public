@@ -74,7 +74,7 @@ class Reminder(Cog):
                 id = id[0]
                 self.bot.scheduler.add_job(self.notify_reminder, CronTrigger(minute=int(minute), hour=int(hour), day=int(day), month=int(month), year=int(year)), [id], id=str(id) + "reminder")
 
-                await ctx.send(f"Successfully added reminder for {month}/{day}/{year} at {hour}:{minute}")
+                await ctx.send(f"Successfully added reminder for {month}/{day}/{year} at {hour}:{int(minute):02d}")
             except Exception as e:
                 print(e)
         #If it matches some form of days, hours, minutes EX: 12d 4h 30m
@@ -111,7 +111,7 @@ class Reminder(Cog):
                 id = db.record(f"INSERT INTO reminders (year, month, day, hour, minute, reminder, username, channel) VALUES('{rtime.year}', '{rtime.month}', '{rtime.day}', '{rtime.hour}', '{rtime.minute}', '{reminder}', '{ctx.author.id}', '{channel}') RETURNING id")
                 id = id[0]
                 self.bot.scheduler.add_job(self.notify_reminder, CronTrigger(minute=rtime.minute, hour=rtime.hour, day=rtime.day, month=rtime.month, year=rtime.year), [id], id=str(id) + "reminder")
-                await ctx.send(f"Successfully added reminder for {rtime.month}/{rtime.day}/{rtime.year} at {rtime.hour}:{rtime.minute}")
+                await ctx.send(f"Successfully added reminder for {rtime.month}/{rtime.day}/{rtime.year} at {rtime.hour}:{rtime.minute:02d}")
             except Exception as e:
                 await print(e)
         else:
