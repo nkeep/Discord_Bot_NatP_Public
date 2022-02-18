@@ -19,6 +19,7 @@ THIS_FOLDER = os.path.dirname(os.path.abspath(__file__))
 files = os.path.join(THIS_FOLDER, ".." + path_separator + "files" + path_separator + "db" + path_separator)
 
 bot_channels = [505589070378958850, 871493456021835797]
+funny_mines = [944367282098941992]
 
 class DB(Cog):
     def __init__(self, bot):
@@ -36,6 +37,7 @@ class DB(Cog):
                     await ctx.send(file=File(rf'{location}'))
                 else:
                     await ctx.send(response[1])
+                db.execute(f"UPDATE db SET uses = uses + 1 WHERE name = '{first}'")
             else:
                 await ctx.send("Command doesn't exist")
         except:
@@ -48,7 +50,7 @@ class DB(Cog):
             command = db.field(f"SELECT name FROM db WHERE name = '{first}'")
             if not command:
                 second = second.replace("'", r"\'")
-                db.execute(f"INSERT INTO db VALUES('{first}', E'{second}', 0)")
+                db.execute(f"INSERT INTO db VALUES('{first}', E'{second}', 0, '{ctx.message.author.id}', 0)")
                 db.commit()
                 await ctx.send("successfully added command")
             else:
@@ -61,7 +63,7 @@ class DB(Cog):
                     fileName = str(uuid.uuid4()) + "." + str(url.split('.')[-1])
                     with open(files + fileName, 'wb') as out_file:
                         shutil.copyfileobj(r.raw, out_file)
-                        db.execute(f"INSERT INTO db VALUES('{first}','{files + fileName}', 1)")
+                        db.execute(f"INSERT INTO db VALUES('{first}','{files + fileName}', 1, {ctx.message.author.id}, 0)")
                         db.commit()
                         await ctx.send("successfully added command")
             except:
@@ -71,10 +73,16 @@ class DB(Cog):
 
     @command(name="dbremove")
     async def dbremove(self, ctx, first):
-        command = db.field(f"SELECT * FROM db WHERE name = '{first}'")
+        command = db.record(f"SELECT * FROM db WHERE name = '{first}'")
+        print(command)
         if command:
             db.execute(f"DELETE FROM db WHERE name = '{first}'")
             await ctx.send(f"Successfully deleted {first}")
+            if command[2]:
+                try:
+                    os.remove(command[1])
+                except Exception as e:
+                    print(e)
         else:
             await ctx.send("Command doesn't exist")
 
@@ -108,7 +116,7 @@ class DB(Cog):
             try:
                 #Old code
                 #list = str(db.column(f"SELECT * from db"))
-                list = str(db.column("SELECT name FROM db WHERE name !~ '(funny$|funny\d+)' AND name !~ '(who$|who\d+)'"))
+                list = str(sorted(db.column("SELECT name FROM db WHERE name !~ '(funny$|funny\d+)' AND name !~ '(who$|who\d+)'")))
                 for i in range(math.ceil(len(list)/2000)): #if the list is more than 2k chars, split it up into multiple messages
                     await ctx.send(list[i*2000:(i+1)*2000])
 
@@ -218,10 +226,27 @@ class DB(Cog):
         except Exception as e:
             print(e)
 
+    @Cog.listener("on_message")
+    async def on_message(self, message):
+        if not message.author.bot:
+            ctx = await self.bot.get_context(message)
+            if message.channel.id in funny_mines and message.content.startswith("https://"):
+                await ctx.invoke(self.bot.get_command('addfunny'), second=message.content)
+            else:
+                try:
+                    url = message.attachments[0].url
+                    if url[0:26] == "https://cdn.discordapp.com":
+                        await ctx.invoke(self.bot.get_command('addfunny'), second=None)
+                except Exception as e:
+                    print("No image found")
+
+
     @Cog.listener()
     async def on_ready(self):
         if not self.bot.ready:
             self.bot.cogs_ready.ready_up("db")
+
+
 
 def setup(bot):
 	bot.add_cog(DB(bot))

@@ -21,6 +21,7 @@ THIS_FOLDER = os.path.dirname(os.path.abspath(__file__))
 root = os.path.join(THIS_FOLDER, ".." + path_separator + ".." + path_separator)
 files = os.path.join(THIS_FOLDER, ".." + path_separator + "files" + path_separator)
 
+funny_channels = [220180534129590273, 505589070378958850, 871493456021835797]
 
 class Fun(Cog):
     def __init__(self, bot):
@@ -69,26 +70,19 @@ class Fun(Cog):
 
     @command(name="funny")
     async def funny(self, ctx): #Select a random 'funny' command from the db
-        if ctx.channel.id == 220180534129590273 or ctx.channel.id == 505589070378958850:
-            all_funnies = db.records("SELECT * FROM db WHERE name ~ '(funny$|funny\d+)'")
+        if ctx.channel.id in funny_channels:
+            all_funnies = db.records("SELECT name FROM db WHERE name ~ '(funny$|funny\d+)'")
             i = randint(0, len(all_funnies) - 1)
-            funny = all_funnies[i]
-            if funny[2] == 1:
-                location = funny[1]
-                await ctx.send(file=File(rf'{location}'))
-            else:
-                await ctx.send(funny[1])
+            funny = all_funnies[i][0]
+            await ctx.invoke(self.bot.get_command('db'), first = funny)
+
 
     @command(name="who")
     async def who(self, ctx): #Select a random 'who' command from the db
-        all_whos = db.records("SELECT * FROM db WHERE name ~ '(who$|who\d+)'")
+        all_whos = db.records("SELECT name FROM db WHERE name ~ '(who$|who\d+)'")
         i = randint(0, len(all_whos) - 1)
-        who = all_whos[i]
-        if who[2] == 1:
-            location = who[1]
-            await ctx.send(file=File(rf'{location}'))
-        else:
-            await ctx.send(who[1])
+        who = all_whos[i][0]
+        await ctx.invoke(self.bot.get_command('db'), first = who)
 
     @command(name="truevoice")
     async def truevoice(self, ctx):
@@ -117,6 +111,10 @@ class Fun(Cog):
         elif re.search("u+p+d+[a4]+t+e+ +(4|f[o0]r)", message.content, re.IGNORECASE):
             if randint(1,6) == 6:
                 await message.channel.send("don't care, didn't ask, plus ratio")
+
+        elif re.search("you (can't|cannot)", message.content, re.IGNORECASE):
+            if randint(1,50) == 50:
+                await message.channel.send("rip to your grandma but I'm different")
 
     @Cog.listener("on_message_edit")
     async def on_message_edit(self, before, after):

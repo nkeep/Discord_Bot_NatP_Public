@@ -14,7 +14,9 @@ CREATE TABLE IF NOT EXISTS exp (
 CREATE TABLE IF NOT EXISTS db (
 	name text PRIMARY KEY,
 	result text,
-	isfile integer
+	isfile integer,
+	author text,
+	uses int DEFAULT 0
 );
 
 CREATE TABLE IF NOT EXISTS memes(
