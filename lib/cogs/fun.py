@@ -44,7 +44,7 @@ class Fun(Cog):
 
     @command(name="slap")
     async def slap_member(self, ctx, member: Member, *, reason: Optional[str] = "no reason"): #member will take either an id or name, etc and figure out who you're talking about, * will combine all trailing argumnents into one
-        await ctx.send(f"{ctx.author.display_name} slapped {member.mention} {reason}!")
+        await ctx.send(f"{ctx.author.display_name} slapped {member.mention} for {reason}!")
 
     @command(name="ye")
     async def ye(self, ctx):
@@ -71,7 +71,7 @@ class Fun(Cog):
     @command(name="funny")
     async def funny(self, ctx): #Select a random 'funny' command from the db
         if ctx.channel.id in funny_channels:
-            all_funnies = db.records("SELECT name FROM db WHERE name ~ '(funny$|funny\d+)'")
+            all_funnies = db.records("SELECT name FROM db WHERE name ~ '(funny$|funny\d+$)'")
             i = randint(0, len(all_funnies) - 1)
             funny = all_funnies[i][0]
             await ctx.invoke(self.bot.get_command('db'), first = funny)
@@ -79,7 +79,7 @@ class Fun(Cog):
 
     @command(name="who")
     async def who(self, ctx): #Select a random 'who' command from the db
-        all_whos = db.records("SELECT name FROM db WHERE name ~ '(who$|who\d+)'")
+        all_whos = db.records("SELECT name FROM db WHERE name ~ '(who$|who\d+$)'")
         i = randint(0, len(all_whos) - 1)
         who = all_whos[i][0]
         await ctx.invoke(self.bot.get_command('db'), first = who)

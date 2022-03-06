@@ -116,7 +116,7 @@ class DB(Cog):
             try:
                 #Old code
                 #list = str(db.column(f"SELECT * from db"))
-                list = str(sorted(db.column("SELECT name FROM db WHERE name !~ '(funny$|funny\d+)' AND name !~ '(who$|who\d+)'")))
+                list = str(sorted(db.column("SELECT name FROM db WHERE name !~ '(funny$|funny\d+$)' AND name !~ '(who$|who\d+$)'")))
                 for i in range(math.ceil(len(list)/2000)): #if the list is more than 2k chars, split it up into multiple messages
                     await ctx.send(list[i*2000:(i+1)*2000])
 
@@ -130,7 +130,7 @@ class DB(Cog):
     async def funnylist(self, ctx):
         print('something')
         try:
-            list = db.column("SELECT REGEXP_REPLACE(name, 'funny', '') FROM db WHERE name ~ '(^funny$|^funny\d+)' ORDER BY CAST (REGEXP_REPLACE(name, 'funny', '0') AS int)")
+            list = db.column("SELECT REGEXP_REPLACE(name, 'funny', '') FROM db WHERE name ~ '(^funny$|^funny\d+$)' ORDER BY CAST (REGEXP_REPLACE(name, 'funny', '0') AS int)")
             output = list[1] + "-"
             prev_num = -1
             new_range = False
@@ -159,7 +159,7 @@ class DB(Cog):
     @command(name="wholist")
     async def wholist(self, ctx):
         try:
-            list = db.column("SELECT REGEXP_REPLACE(name, 'who', '') FROM db WHERE name ~ '(^who$|^who\d+)' ORDER BY CAST (REGEXP_REPLACE(name, 'who', '0') AS int);")
+            list = db.column("SELECT REGEXP_REPLACE(name, 'who', '') FROM db WHERE name ~ '(^who$|^who\d+$)' ORDER BY CAST (REGEXP_REPLACE(name, 'who', '0') AS int);")
             output = list[1] + "-"
             prev_num = -1
             new_range = False
@@ -187,7 +187,7 @@ class DB(Cog):
     @command(name="addfunny")
     async def addfunny(self, ctx, *, second: Optional[str]):
         try:
-            list = db.column("SELECT REGEXP_REPLACE(name, 'funny', '') FROM db WHERE name ~ '(^funny$|^funny\d+)' ORDER BY CAST (REGEXP_REPLACE(name, 'funny', '0') AS int);")
+            list = db.column("SELECT REGEXP_REPLACE(name, 'funny', '') FROM db WHERE name ~ '(^funny$|^funny\d+$)' ORDER BY CAST (REGEXP_REPLACE(name, 'funny', '0') AS int);")
             prev_num = -1
             next_num = -1
             for item in list:
@@ -208,7 +208,7 @@ class DB(Cog):
     @command(name="addwho")
     async def addwho(self, ctx, *, second: Optional[str]):
         try:
-            list = db.column("SELECT REGEXP_REPLACE(name, 'who', '') FROM db WHERE name ~ '(^who$|^who\d+)' ORDER BY CAST (REGEXP_REPLACE(name, 'who', '0') AS int);")
+            list = db.column("SELECT REGEXP_REPLACE(name, 'who', '') FROM db WHERE name ~ '(^who$|^who\d+$)' ORDER BY CAST (REGEXP_REPLACE(name, 'who', '0') AS int);")
             prev_num = -1
             next_num = -1
             for item in list:
@@ -230,15 +230,16 @@ class DB(Cog):
     async def on_message(self, message):
         if not message.author.bot:
             ctx = await self.bot.get_context(message)
-            if message.channel.id in funny_mines and message.content.startswith("https://"):
-                await ctx.invoke(self.bot.get_command('addfunny'), second=message.content)
-            else:
-                try:
-                    url = message.attachments[0].url
-                    if url[0:26] == "https://cdn.discordapp.com":
-                        await ctx.invoke(self.bot.get_command('addfunny'), second=None)
-                except Exception as e:
-                    print("No image found")
+            if message.channel.id in funny_mines:
+                if message.content.startswith("https://"):
+                    await ctx.invoke(self.bot.get_command('addfunny'), second=message.content)
+                else:
+                    try:
+                        url = message.attachments[0].url
+                        if url[0:26] == "https://cdn.discordapp.com":
+                            await ctx.invoke(self.bot.get_command('addfunny'), second=None)
+                    except Exception as e:
+                        print("No image found")
 
 
     @Cog.listener()
