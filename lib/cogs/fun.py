@@ -68,13 +68,13 @@ class Fun(Cog):
         await ctx.send(all_tweets[randint(0, len(all_tweets) - 1)])
 
 
-    @command(name="funny")
-    async def funny(self, ctx): #Select a random 'funny' command from the db
-        if ctx.channel.id in funny_channels:
-            all_funnies = db.records("SELECT name FROM db WHERE name ~ '(funny$|funny\d+$)'")
-            i = randint(0, len(all_funnies) - 1)
-            funny = all_funnies[i][0]
-            await ctx.invoke(self.bot.get_command('db'), first = funny)
+    # @command(name="funny")
+    # async def funny(self, ctx): #Select a random 'funny' command from the db
+    #     if ctx.channel.id in funny_channels:
+    #         all_funnies = db.records("SELECT name FROM db WHERE name ~ '(funny$|funny\d+$)'")
+    #         i = randint(0, len(all_funnies) - 1)
+    #         funny = all_funnies[i][0]
+    #         await ctx.invoke(self.bot.get_command('db'), first = funny)
 
 
     @command(name="who")

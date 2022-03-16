@@ -141,7 +141,8 @@ class Bot(BotBase):
 
     async def on_message(self, message):
         if not message.author.bot: #ignores other bots
-            await self.process_commands(message)
+            if not message.author.id == 143865454212022272 and not message.author.id == 143863189405302784:
+                await self.process_commands(message)
 
 
 bot = Bot()
