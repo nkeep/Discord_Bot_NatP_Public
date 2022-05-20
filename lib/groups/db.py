@@ -1,7 +1,7 @@
 import discord
 from discord import Member, ChannelType, File
 from discord import app_commands as apc
-from typing import Optional
+from typing import Optional, List
 from discord.message import Attachment
 
 from ..db import db as dbs
@@ -58,7 +58,7 @@ class db(apc.Group):
     interaction: discord.Interaction,
     current: str,
     namespace: apc.Namespace
-    ) -> list[apc.Choice[str]]:
+    ) -> List[apc.Choice[str]]:
         name = db_commands
         print(current.data['options'][0]['options'][0]['value'])
         return [
@@ -118,7 +118,7 @@ class db(apc.Group):
     interaction: discord.Interaction,
     current: str,
     namespace: apc.Namespace
-    ) -> list[apc.Choice[str]]:
+    ) -> List[apc.Choice[str]]:
         name = db_commands
         print(current.data['options'][0]['options'][0]['value'])
         return [
@@ -150,7 +150,7 @@ class db(apc.Group):
     interaction: discord.Interaction,
     current: str,
     namespace: apc.Namespace
-    ) -> list[apc.Choice[str]]:
+    ) -> List[apc.Choice[str]]:
         name = db_commands
         print(current.data['options'][0]['options'][0]['value'])
         return [
