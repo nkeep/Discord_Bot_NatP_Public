@@ -27,7 +27,6 @@ class DB(Cog):
 
     @command(name="db")
     async def db(self, ctx, first):
-        print('db command called')
         if not 'funny' in first: #3/15
             try: #Think this is needed for if you delete a record and then call it again (sql query throws error)
                 response = db.record(f"SELECT * FROM db WHERE name = '{first}'")
@@ -101,9 +100,9 @@ class DB(Cog):
                 if url[0:26] == "https://cdn.discordapp.com":
                     r = requests.get(url, stream=True)
                     fileName = str(uuid.uuid4()) + "." + str(url.split('.')[-1])
-                    with open(file + fileName, 'wb') as out_file:
+                    with open(files + fileName, 'wb') as out_file:
                         shutil.copyfileobj(r.raw, out_file)
-                        db.execute(f"UPDATE db SET name='{first}', {files + fileName}, isfile=1 WHERE name='{first}'")
+                        db.execute(f"UPDATE db SET name='{first}', result='{files + fileName}', isfile=1 WHERE name='{first}'")
                         db.commit()
                         await ctx.send(f"successfully updated {first}")
             except:
@@ -116,8 +115,6 @@ class DB(Cog):
     async def dblist(self, ctx):
         if ctx.channel.id in bot_channels:
             try:
-                #Old code
-                #list = str(db.column(f"SELECT * from db"))
                 list = str(sorted(db.column("SELECT name FROM db WHERE name !~ '(funny$|funny\d+$)' AND name !~ '(who$|who\d+$)'")))
                 for i in range(math.ceil(len(list)/2000)): #if the list is more than 2k chars, split it up into multiple messages
                     await ctx.send(list[i*2000:(i+1)*2000])
@@ -253,5 +250,5 @@ class DB(Cog):
 
 
 
-def setup(bot):
-	bot.add_cog(DB(bot))
+async def setup(bot):
+	await bot.add_cog(DB(bot))

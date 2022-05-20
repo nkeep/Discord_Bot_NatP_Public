@@ -108,6 +108,9 @@ class Fun(Cog):
         if message.content.startswith('!play') and message.channel.id != 505589070378958850:
             await message.author.kick(reason="Don't type !play in the non bot channel idiot")
 
+        elif message.content.startswith('+funny'):
+            await message.author.kick(reason="funny")
+
         elif re.search("u+p+d+[a4]+t+e+ +(4|f[o0]r)", message.content, re.IGNORECASE):
             if randint(1,6) == 6:
                 await message.channel.send("don't care, didn't ask, plus ratio")
@@ -126,5 +129,5 @@ class Fun(Cog):
         if not self.bot.ready:
             self.bot.cogs_ready.ready_up("fun")
 
-def setup(bot):
-    bot.add_cog(Fun(bot))
+async def setup(bot):
+    await bot.add_cog(Fun(bot))

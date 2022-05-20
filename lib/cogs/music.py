@@ -690,6 +690,6 @@ class Music(commands.Cog, wavelink.WavelinkMixin):
         await ctx.send("Seeked.")
 
 
-def setup(bot):
+async def setup(bot):
     if os.name != 'nt':
-        bot.add_cog(Music(bot))
+        await bot.add_cog(Music(bot))

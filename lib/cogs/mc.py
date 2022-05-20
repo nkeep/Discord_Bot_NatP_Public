@@ -143,5 +143,5 @@ class MC(Cog):
         if not self.bot.ready:
             self.bot.cogs_ready.ready_up("mc")
 
-def setup(bot):
-	bot.add_cog(MC(bot))
+async def setup(bot):
+	await bot.add_cog(MC(bot))

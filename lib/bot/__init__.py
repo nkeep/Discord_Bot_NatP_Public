@@ -3,6 +3,8 @@ from datetime import datetime
 from glob import glob
 from random import randint
 
+import discord
+from discord import app_commands
 from discord import Intents, ClientUser
 from discord.ext.commands import Bot as BotBase
 from discord.ext.commands import CommandNotFound, BadArgument, MissingRequiredArgument
@@ -12,18 +14,20 @@ from apscheduler.triggers.cron import CronTrigger
 import os
 
 from ..db import db
+from ..groups import db as slashdb
 
 
 from config import token, default_prefix, path_separator
 
 THIS_FOLDER = os.path.dirname(os.path.abspath(__file__))
 cogs = os.path.join(THIS_FOLDER, ".." + path_separator + "cogs" + path_separator + "*.py")
+groups = os.path.join(THIS_FOLDER, ".." + path_separator + "groups" + path_separator + "*.py")
 print(cogs)
 OWNER_IDS = [143919895694802944]
 COGS = [path.split(path_separator)[-1][:-3] for path in glob(cogs)]
+GROUPS = [path.split(path_separator)[-1][:-3] for path in glob(groups)]
 print(COGS)
 IGNORE_EXCEPTIONS = (CommandNotFound, BadArgument)
-
 
 def get_prefix(bot, message):
     prefix=""
@@ -57,23 +61,32 @@ class Bot(BotBase):
 
         db.autosave(self.scheduler)
 
+        intents = Intents.all()
+        intents.message_content = True
+
         super().__init__(
         command_prefix=get_prefix,
         ownder_ids = OWNER_IDS,
-        intents=Intents.all(),
+        intents=intents,
         )
 
-    def setup(self):
+    async def setup(self):
         print(COGS)
         for cog in COGS:
-            self.load_extension(f"lib.cogs.{cog}")
+            await self.load_extension(f"lib.cogs.{cog}")
             print(f"{cog} cog loaded")
         print("setup complete")
+
+        self.tree.add_command(slashdb.db(self), guild=discord.Object(id=533019434491576323))
+
+        await self.tree.sync(guild=discord.Object(id=533019434491576323))
+
+        print("added group")
 
     def run(self, version):
         self.VERSION = version
         print("running setup")
-        self.setup()
+        # self.setup()
 
         self.TOKEN = token
 
@@ -92,6 +105,7 @@ class Bot(BotBase):
             await self.user.edit(avatar=image.read())
 
     async def on_connect(self):
+        await self.setup()
         print("bot connected")
 
     async def on_disconnect(self):
@@ -146,3 +160,9 @@ class Bot(BotBase):
 
 
 bot = Bot()
+# @app_commands.command()
+# async def slash(interaction: discord.Interaction, number: int, string: str):
+#     await interaction.response.send_message(f'Modify {number=} {string=}', ephemeral=True)
+#
+#
+# bot.tree.add_command(slash, guild=discord.Object(id=533019434491576323))

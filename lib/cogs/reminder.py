@@ -132,5 +132,5 @@ class Reminder(Cog):
         if not self.bot.ready:
             self.bot.cogs_ready.ready_up("reminder")
 
-def setup(bot):
-    bot.add_cog(Reminder(bot))
+async def setup(bot):
+    await bot.add_cog(Reminder(bot))

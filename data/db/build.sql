@@ -45,6 +45,12 @@ CREATE TABLE IF NOT EXISTS csgo(
 	data text
 );
 
+CREATE TABLE IF NOT EXISTS nba(
+	id BIGSERIAL PRIMARY KEY,
+	game_datetime text,
+	opponent text
+);
+
 CREATE TABLE IF NOT EXISTS reminders(
 	id BIGSERIAL PRIMARY KEY,
 	year int,

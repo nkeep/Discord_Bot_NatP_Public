@@ -40,5 +40,5 @@ class Misc(Cog):
             self.bot.cogs_ready.ready_up("misc")
 
 
-def setup(bot):
-	bot.add_cog(Misc(bot))
+async def setup(bot):
+	await bot.add_cog(Misc(bot))

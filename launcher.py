@@ -1,6 +1,6 @@
 from lib.bot import bot
 
-VERSION = "1.8"
+VERSION = "1.9"
 
 bot.run(VERSION)
 
@@ -12,3 +12,4 @@ bot.run(VERSION)
 #1.6    Alter dblist and add funnylist, wholist, addfunny, and addwho commands
 #1.7    Add truevoice command
 #1.8    Increase ratioing awareness >:)
+#1.9    Update to experimental discord.py and create a 'group' for the db commands

@@ -14,7 +14,7 @@ important_teams = [b"Liquid", b"Kings of Content", b"Evil Geniuses"]
 class CSGO(Cog):
     def __init__(self, bot):
         self.bot = bot
-        bot.scheduler.add_job(self.look_for_matches, CronTrigger(minute="0,30"))
+        bot.scheduler.add_job(self.look_for_matches, CronTrigger(minute="14,29,44,59"))
         self.remove_old_matches()
         self.get_db_matches()
         self.look_for_matches()
@@ -101,5 +101,5 @@ class CSGO(Cog):
         if not self.bot.ready:
             self.bot.cogs_ready.ready_up("csgo")
 
-def setup(bot):
-	bot.add_cog(CSGO(bot))
+async def setup(bot):
+	await bot.add_cog(CSGO(bot))

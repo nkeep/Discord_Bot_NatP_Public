@@ -185,8 +185,8 @@ class Meme(Cog):
         if not self.bot.ready:
             self.bot.cogs_ready.ready_up("meme")
 
-def setup(bot):
-	bot.add_cog(Meme(bot))
+async def setup(bot):
+	await bot.add_cog(Meme(bot))
 
 #Used this guy's code: https://github.com/lipsumar/meme-caption/blob/master/meme.py
 def drawText(img, draw, msg, pos):
