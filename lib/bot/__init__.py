@@ -80,6 +80,8 @@ class Bot(BotBase):
         self.tree.add_command(slashdb.db(self), guild=discord.Object(id=533019434491576323))
 
         await self.tree.sync(guild=discord.Object(id=533019434491576323))
+        await self.tree.sync(guild=discord.Object(id=220180151315595264))
+        await self.tree.sync(guild=discord.Object(id=484582649965576199))
 
         print("added group")
 
