@@ -53,18 +53,18 @@ class db(apc.Group):
             except Exception as e:
                 print(e)
 
-    @db.autocomplete('name')
-    async def db_autocomplete(
-    interaction: discord.Interaction,
-    current: str,
-    namespace: apc.Namespace
-    ) -> List[apc.Choice[str]]:
-        name = db_commands
-        print(current.data['options'][0]['options'][0]['value'])
-        return [
-            apc.Choice(name=nm, value=nm)
-            for nm in name if current.data['options'][0]['options'][0]['value'].lower() in nm.lower()
-        ]
+    # @db.autocomplete('name')
+    # async def db_autocomplete(
+    # interaction: discord.Interaction,
+    # current: str,
+    # namespace: apc.Namespace
+    # ) -> List[apc.Choice[str]]:
+    #     name = db_commands
+    #     print(current.data['options'][0]['options'][0]['value'])
+    #     return [
+    #         apc.Choice(name=nm, value=nm)
+    #         for nm in name if current.data['options'][0]['options'][0]['value'].lower() in nm.lower()
+    #     ]
 
     @apc.command(name="dbadd")
     async def dbadd(self, interaction: discord.Interaction, name: str, text: Optional[str], file: Optional[Attachment]):
@@ -113,18 +113,18 @@ class db(apc.Group):
         else:
             await interaction.response.send_message("Command doesn't exist")
 
-    @dbremove.autocomplete('name')
-    async def dbremove_autocomplete(
-    interaction: discord.Interaction,
-    current: str,
-    namespace: apc.Namespace
-    ) -> List[apc.Choice[str]]:
-        name = db_commands
-        print(current.data['options'][0]['options'][0]['value'])
-        return [
-            apc.Choice(name=nm, value=nm)
-            for nm in name if current.data['options'][0]['options'][0]['value'].lower() in nm.lower()
-        ]
+    # @dbremove.autocomplete('name')
+    # async def dbremove_autocomplete(
+    # interaction: discord.Interaction,
+    # current: str,
+    # namespace: apc.Namespace
+    # ) -> List[apc.Choice[str]]:
+    #     name = db_commands
+    #     print(current.data['options'][0]['options'][0]['value'])
+    #     return [
+    #         apc.Choice(name=nm, value=nm)
+    #         for nm in name if current.data['options'][0]['options'][0]['value'].lower() in nm.lower()
+    #     ]
 
     @apc.command(name="dbupdate")
     async def dbupdate(self, interaction: discord.Interaction, name: str, text: Optional[str], file: Optional[Attachment]):
@@ -145,18 +145,18 @@ class db(apc.Group):
             except Exception as e:
                 print(e)
 
-    @dbupdate.autocomplete('name')
-    async def dbupdate_autocomplete(
-    interaction: discord.Interaction,
-    current: str,
-    namespace: apc.Namespace
-    ) -> List[apc.Choice[str]]:
-        name = db_commands
-        print(current.data['options'][0]['options'][0]['value'])
-        return [
-            apc.Choice(name=nm, value=nm)
-            for nm in name if current.data['options'][0]['options'][0]['value'].lower() in nm.lower()
-        ]
+    # @dbupdate.autocomplete('name')
+    # async def dbupdate_autocomplete(
+    # interaction: discord.Interaction,
+    # current: str,
+    # namespace: apc.Namespace
+    # ) -> List[apc.Choice[str]]:
+    #     name = db_commands
+    #     print(current.data['options'][0]['options'][0]['value'])
+    #     return [
+    #         apc.Choice(name=nm, value=nm)
+    #         for nm in name if current.data['options'][0]['options'][0]['value'].lower() in nm.lower()
+    #     ]
 
     @apc.command(name="dblist")
     async def dblist(self, interaction: discord.Interaction):
