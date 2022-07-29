@@ -139,13 +139,14 @@ class MC(Cog):
                 # no_players = list[0].split("There are ")
                 players = pexpect.run('/home/nkeep/mcrcon/mcrcon -H 0.0.0.0 -p bananabread -w 5 "list"')
                 players = players.decode()
-                p = re.compile("There are (\d+) of")
+                p = re.compile("There are (\d+) of.*online: (.*)")
                 m = p.match(players)
-                online_players = m.group(1)
-                if online_players == "0": 
+                num_players = m.group(1)
+                online_players = m.group(2)
+                if num_players == "0": 
                     await ctx.send("No players online")
                 else:
-                    await ctx.send("Players online: " + online_players)
+                    await ctx.send(num_players + " Players online: " + online_players)
             except:
                 await ctx.send("Failed to get list")
         else:
