@@ -9,6 +9,7 @@ import re
 from ..db import db
 
 server_status = 0
+ansi_escape = re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])')
 
 
 class MC(Cog):
@@ -143,6 +144,7 @@ class MC(Cog):
                 m = p.match(players)
                 num_players = m.group(1)
                 online_players = m.group(2)
+                online_players = ansi_escape.sub('',online_players)
                 if num_players == "0": 
                     await ctx.send("No players online")
                 else:
