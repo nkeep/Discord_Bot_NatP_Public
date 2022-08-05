@@ -177,6 +177,6 @@ bot = Bot()
 async def msbug(interaction: discord.Interaction):
     await interaction.response.send_modal(MS_Bug())
 #
-#bot.tree.add_command(msbug, guild=discord.Object(id=533019434491576323))
+bot.tree.add_command(msbug, guild=discord.Object(id=533019434491576323))
 bot.tree.add_command(msbug, guild=discord.Object(id=220180151315595264))
 bot.tree.add_command(msbug, guild=discord.Object(id=484582649965576199))
