@@ -4,7 +4,7 @@ from glob import glob
 from random import randint
 
 import discord
-from discord import app_commands
+from discord import Forbidden, HTTPException, ui, app_commands
 from discord import Intents, ClientUser
 from discord.ext.commands import Bot as BotBase
 from discord.ext.commands import CommandNotFound, BadArgument, MissingRequiredArgument
@@ -160,11 +160,23 @@ class Bot(BotBase):
             if not message.author.id == 143865454212022272 and not message.author.id == 143863189405302784:
                 await self.process_commands(message)
 
+class MS_Bug(ui.Modal, title="MS Bug Report"):
+    application = ui.TextInput(label = "Application", style=discord.TextStyle.short, placeholder="Which of Microsoft's shitty products")
+    description = ui.TextInput(label="Description", style=discord.TextStyle.long, placeholder="A description of the bug")
+    due_date = ui.TextInput(label="Due Date", style=discord.TextStyle.short, placeholder="Please be unrealistic")
+    
+    async def on_submit(self, interaction: discord.Interaction):
+        embed = discord.Embed(title="Microsoft Bug Report", description=f"""**{self.application.label}**\n{self.application}\n
+        **{self.description.label}**\n{self.description}\n 
+        **{self.due_date.label}**\n{self.due_date}\n""")
+        embed.set_author(name = interaction.user, icon_url=interaction.user.avatar)
+        await interaction.response.send_message(embed=embed, content="<@!143863189405302784> Please check your calendar to fix this at your earliest convenience. Thanks")
 
 bot = Bot()
-# @app_commands.command()
-# async def slash(interaction: discord.Interaction, number: int, string: str):
-#     await interaction.response.send_message(f'Modify {number=} {string=}', ephemeral=True)
+@app_commands.command(name="msbug")
+async def msbug(interaction: discord.Interaction):
+    await interaction.response.send_modal(MS_Bug())
 #
-#
-# bot.tree.add_command(slash, guild=discord.Object(id=533019434491576323))
+#bot.tree.add_command(msbug, guild=discord.Object(id=533019434491576323))
+bot.tree.add_command(msbug, guild=discord.Object(id=220180151315595264))
+bot.tree.add_command(msbug, guild=discord.Object(id=484582649965576199))
