@@ -46,8 +46,8 @@ class Gospel(Cog):
         if not self.bot.ready:
             self.bot.cogs_ready.ready_up("gospel")
 
-def setup(bot):
-    bot.add_cog(Gospel(bot))
+async def setup(bot):
+    await bot.add_cog(Gospel(bot))
 
 def get_next_sunday():
     today = datetime.date.today()
