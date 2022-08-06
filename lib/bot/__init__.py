@@ -115,7 +115,8 @@ class Bot(BotBase):
 
     async def on_error(self, err, *args, **kwargs):
         if err == "on_command_error":
-            await args[0].send("Something went wrong.")
+            pass
+            #await args[0].send("Something went wrong.")
 
         raise
 
@@ -133,9 +134,9 @@ class Bot(BotBase):
             pass
         elif isinstance(exc, MissingRequiredArgument):
             await ctx.send("One or more required arguments are missing.")
-        elif isinstance(exc.original, HTTPException):
+        elif isinstance(exc, HTTPException):
             await ctx.send("Unable to send message")
-        elif isinstance(exc.original, Forbidden):
+        elif isinstance(exc, Forbidden):
             await ctx.send("I do not have permission to do that")
         else:
             raise exc
