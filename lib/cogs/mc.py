@@ -19,36 +19,6 @@ class MC(Cog):
 
         global server_status
         try:
-            # child = pexpect.spawn('sh', timeout=2)
-            # child.expect([pexpect.TIMEOUT,'#'])
-            # child.sendline('screen -r')
-            # # child.expect('> ') #Works with paper
-            # # Need this for reg server.jar
-            # now = datetime.now()
-            # current_time = now.strftime("%H:%M:%S")
-            # print(current_time)
-
-            # one_second_after = current_time[-2:]
-            # size = len(current_time)
-            # time_one_second_later = current_time[:size-2] + one_second_after
-            # child.sendline('\n')
-            # child.expect(current_time + ".*|" + time_one_second_later + ".*", timeout=5)
-            # #End
-
-            # now = datetime.now()
-            # current_time = now.strftime("%H:%M:%S")
-            # print(current_time)
-
-            # one_second_after = current_time[-2:]
-            # size = len(current_time)
-            # time_one_second_later = current_time[:size-2] + one_second_after
-
-            # child.sendline('list')
-            # child.expect(current_time + ".*|" + time_one_second_later + ".*", timeout=5) #If we are in mc server then this will match and will set server_status to 1
-
-            # server_status = 1
-            # child.sendline('\001d')
-            # child.terminate()
             status = (pexpect.run('/home/nkeep/mcrcon/mcrcon -H 0.0.0.0 -p bananabread -w 5 "list"')).decode()
             p = re.compile("Connection failed")
             if p.match(status): #Server is not live
@@ -64,18 +34,6 @@ class MC(Cog):
         if server_status == 0:
             return
         else:
-            # child = pexpect.spawn('sh')
-            # child.expect([pexpect.TIMEOUT,'#'])
-            # child.sendline('screen -r')
-            # child.expect([pexpect.TIMEOUT, '>'])
-
-            # now = datetime.now()
-            # current_time = now.strftime("%H:%M:%S")
-
-            # child.sendline('list')
-            # child.expect(current_time + ".*", timeout=5)
-
-            # list = child.after.decode().split("There are ")
             players = pexpect.run('/home/nkeep/mcrcon/mcrcon -H 0.0.0.0 -p bananabread -w 5 "list"')
             players = players.decode()
             p = re.compile("There are (\d+) of")
@@ -118,26 +76,6 @@ class MC(Cog):
         global server_status
         if server_status == 1:
             try:
-                # child = pexpect.spawn('sh', timeout=2)
-                # child.expect([pexpect.TIMEOUT,'#'])
-                # child.sendline('screen -r')
-                # child.expect([pexpect.TIMEOUT, '>'])
-
-                # now = datetime.now()
-                # current_time = now.strftime("%H:%M:%S")
-                # print(current_time)
-
-                # one_second_after = current_time[-2:]
-                # size = len(current_time)
-                # time_one_second_later = current_time[:size-2] + one_second_after
-
-                # child.sendline('list')
-                # child.expect(current_time + ".*|" + time_one_second_later + ".*", timeout=5)
-
-                # list = child.after.decode().split("online:")
-                # child.sendline('\001d')
-                # child.terminate()
-                # no_players = list[0].split("There are ")
                 players = pexpect.run('/home/nkeep/mcrcon/mcrcon -H 0.0.0.0 -p bananabread -w 5 "list"')
                 players = players.decode()
                 p = re.compile("There are (\d+) of.*online: (.*)")
@@ -154,6 +92,13 @@ class MC(Cog):
         else:
             await ctx.send("Server must be running to use this command. Use mcstart to start server")
 
+    @command(name="mcweatherclear", aliases=["mcwc", "mctoggledownfall"])
+    async def mcweatherclear(self, ctx):
+        await mc_command(ctx, "weather clear")
+
+    @command(name="mctimeset0", aliases=["mcts0", "mctimesetday", "mctsd"])
+    async def mctimeset0(self, ctx):
+        await mc_command(ctx, "time set 0")
 
     @Cog.listener()
     async def on_ready(self):
@@ -162,3 +107,13 @@ class MC(Cog):
 
 async def setup(bot):
 	await bot.add_cog(MC(bot))
+
+async def mc_command(ctx, command):
+    global server_status
+    if server_status == 1:
+        try:
+            pexpect.run(f'/home/nkeep/mcrcon/mcrcon -H 0.0.0.0 -p bananabread -w 5 "{command}"')
+        except:
+            await ctx.send("Failed to clear weather")
+    else:
+        await ctx.send("Server must be running to use this command. Use mcstart to start server")

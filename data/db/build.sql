@@ -62,3 +62,8 @@ CREATE TABLE IF NOT EXISTS reminders(
 	username bigint,
 	channel bigint
 );
+
+CREATE TABLE IF NOT EXISTS playlists(
+	name text PRIMARY KEY,
+	url text
+);

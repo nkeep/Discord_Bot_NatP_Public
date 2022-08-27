@@ -7,6 +7,7 @@ from ..db import db
 
 import math
 import requests
+import discord
 import uuid
 import shutil
 import os
@@ -224,6 +225,57 @@ class DB(Cog):
             await ctx.invoke(self.bot.get_command('dbadd'), first='who' + str(next_num), second=second)
         except Exception as e:
             print(e)
+
+    @command(name="addplaylist", aliases=["playlistadd"])
+    async def addplaylist(self, ctx, name, url):
+        try:
+            if ".com/playlist?list=" in url:
+                db.execute(f"INSERT INTO playlists VALUES('{name}', E'{url}')")
+                await ctx.send("Successfully added playlist")
+            else:
+                await ctx.send("Not a valid playlist")
+        except Exception as e:
+            await ctx.send("Failed to add playlist")
+            print(e)
+
+    @command(name="removeplaylist", aliases=["playlistremove"])
+    async def removeplaylist(self, ctx, name):
+        try:
+            playlist = db.record(f"SELECT 1 FROM playlists WHERE name = '{name}'")
+            print(playlist)
+            if playlist:
+                db.execute(f"DELETE FROM playlists WHERE name = '{name}'")
+                await ctx.send(f"Successfully deleted {name}")
+            else:
+                await ctx.send("Playlist doesn't exist")
+        except Exception as e:
+            print(e)
+            await ctx.send("Command failed")
+
+    @command(name="playlistlist", aliases=["listplaylists", "listplaylist"])
+    async def playlistlist(self,ctx):
+        try:
+            playlists = db.records(f"SELECT name, url FROM playlists ORDER BY name")
+            embed = discord.Embed(
+                title="Playlists",
+                description=(
+                    "\n".join(
+                        f"**{i + 1}**. {t[0]} : {t[1]}"
+                        for i, t in enumerate(playlists)
+                    )
+                ),
+                colour=ctx.author.colour
+            )
+            await ctx.send(embed=embed)
+        except Exception as e:
+            print(e)
+            await ctx.send("Command failed")
+
+
+    @command(name="playplaylist", aliases=["pplaylist"])
+    async def playplaylist(self, ctx, name):
+        url = db.record(f"SELECT url FROM playlists WHERE name = '{name}'")
+        await ctx.invoke(self.bot.get_command('play'), query=url[0])
 
 
     #Funny mines

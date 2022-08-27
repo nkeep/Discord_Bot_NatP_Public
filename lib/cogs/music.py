@@ -6,10 +6,12 @@ import re
 import os
 import typing as t
 from enum import Enum
+from typing import Optional
 
 import aiohttp
 import discord
 import wavelink
+import math
 from discord.ext import commands
 
 URL_REGEX = r"(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))"
@@ -98,12 +100,17 @@ class RepeatMode(Enum):
     ONE = 1
     ALL = 2
 
+class Mode(Enum):
+    ALL = math.inf
+    TEN_MIN = 10
+    THIRTY_MIN = 30
 
 class Queue:
     def __init__(self):
         self._queue = []
         self.position = 0
         self.repeat_mode = RepeatMode.NONE
+        self.mode = Mode.TEN_MIN
 
     @property
     def is_empty(self):
@@ -135,8 +142,19 @@ class Queue:
     def length(self):
         return len(self._queue)
 
-    def add(self, *args):
-        self._queue.extend(args)
+    def add(self, insert, *args):
+        skipped_songs = 0
+        for i in range(len(args)):
+            index = len(args) - i - 1
+            if args[index].length < (60* self.mode.value):
+                if insert:
+                    self._queue.insert(self.position + 1, args[0])
+                else:
+                    self._queue.append(args[index])
+            else:
+                skipped_songs += 1
+        return skipped_songs
+            
 
     def get_next_track(self):
         if not self._queue:
@@ -151,8 +169,22 @@ class Queue:
                 self.position = 0
             else:
                 return None
-
+# ADD ERROR MESSAGE TODO
         return self._queue[self.position]
+
+    def update_for_mode(self):
+        shift = 0
+        for i in range(len(self._queue)):
+            index = len(self._queue) - i - 1 #Iterate in reverse
+            if (index) == self.position: #Don't remove the currently playing track
+                pass
+            if self._queue[index].length > (self.mode.value * 60):
+                if (index) < self.position:
+                    shift += 1
+                self._queue.pop(index)
+                
+        self.position -= shift
+    
 
     def shuffle(self):
         if not self._queue:
@@ -276,7 +308,8 @@ class Music(commands.Cog):
     async def on_voice_state_update(self, member, before, after):
         if not member.bot and after.channel is None:
             if not [m for m in before.channel.members if not m.bot]:
-                await self.get_player(member.guild).teardown()
+                self.queue.empty()
+                await self.get_player(member.guild).disconnect()
 
     @commands.Cog.listener()
     async def on_wavelink_node_ready(self, node):
@@ -302,17 +335,6 @@ class Music(commands.Cog):
 
     async def start_nodes(self):
         await self.bot.wait_until_ready()
-
-        # node = {
-        #     "MAIN": {
-        #         "host": "127.0.0.1",
-        #         "port": 2333,
-        #         "rest_uri": "http://127.0.0.1:2333",
-        #         "password": "youshallnotpass",
-        #         "identifier": "MAIN",
-        #         "region": "europe",
-        #     }
-        # }
 
         await wavelink.NodePool.create_node(bot=self.bot,
                                     host='127.0.0.1',
@@ -345,6 +367,26 @@ class Music(commands.Cog):
         await player.disconnect()
         await ctx.send("Disconnected.")
 
+    @commands.command(name="changemode", aliases=["mode", "setmode", "musicmode"])
+    async def changemode(self, ctx, mode: Optional[str]):
+        if mode == None:
+            await ctx.send(str(self.queue.mode.value) + " minute mode")
+            return
+        if mode.startswith("10") or mode.lower().startswith("ten"):
+            self.queue.mode = Mode.TEN_MIN
+            self.queue.update_for_mode()
+            await ctx.send("Successfully set mode. Only songs < 10 min will play now.")
+        elif mode.startswith("30") or mode.lower().startswith("thirty"):
+            self.queue.mode = Mode.THIRTY_MIN
+            self.queue.update_for_mode()
+            await ctx.send("Successfully set mode. Only songs < 30 min will play now.")
+        elif mode.lower().startswith("all"):
+            self.queue.mode = Mode.ALL
+            await ctx.send("Successfully set mode. All songs will play now.")
+        else:
+            await ctx.send("Invalid mode. Available options: 10, 30, all")
+        
+
     @commands.command(name="play")
     async def play_command(self, ctx, *, query: t.Optional[str]):
         player = self.get_player(ctx.guild)
@@ -367,26 +409,65 @@ class Music(commands.Cog):
             query = query.strip("<>")
             if not re.match(URL_REGEX, query) or "playlist?list=" in query:
                 tracks = await wavelink.YouTubeTrack.search(query=query)
+                tracks = [track for track in tracks if track.length < (self.queue.mode.value * 60)]
             else:
                 tracks = [await wavelink.YouTubeTrack.search(query=query, return_first=True)]
                 
             await self.add_tracks(ctx, tracks)
 
-    async def add_tracks(self, ctx, tracks):
+    @commands.command(name="playtop")
+    async def playtop(self, ctx, *, query: t.Optional[str]):
+        player = self.get_player(ctx.guild)
+        if not player:
+            voice_channel = ctx.author.voice.channel
+            await voice_channel.connect(cls=wavelink.Player)
+        player = self.get_player(ctx.guild)
+            
+        if not player.is_connected():
+            await player.connect(ctx)
+
+        if query is None:
+            if self.queue.is_empty:
+                raise QueueIsEmpty
+
+            await player.set_pause(False)
+            await ctx.send("Playback resumed.")
+
+        else:
+            query = query.strip("<>")
+            if "playlist?list=" in query:
+                await ctx.send("Can't add a playlist with playtop")
+            elif not re.match(URL_REGEX, query):
+                tracks = await wavelink.YouTubeTrack.search(query=query)
+            else:
+                tracks = [await wavelink.YouTubeTrack.search(query=query, return_first=True)]
+
+            await self.add_tracks(ctx, tracks, insert=True)
+
+    async def add_tracks(self, ctx, tracks, insert=False):
         player = self.get_player(ctx.guild)
         if not tracks:
             raise NoTracksFound
 
         if isinstance(tracks, wavelink.YouTubePlaylist):
-            self.queue.add(*tracks.tracks)
+            if (skipped := self.queue.add(insert, *tracks.tracks)) != len(tracks.tracks):
+                message = f"Added {tracks.name} to the queue."
+                if skipped:
+                    message += f" Skipped {skipped} songs due to mode."
+                await ctx.send(message)
+            else:
+                await ctx.send(f"Failed to add due to mode. Change mode with 'changemode'")
         elif len(tracks) == 1:
-            self.queue.add(tracks[0])
-            print(tracks[0].length)
-            await ctx.send(f"Added {tracks[0]} to the queue.")
+            if not (skipped := self.queue.add(insert, tracks[0])):
+                await ctx.send(f"Added {tracks[0]} to the queue.")
+            else:
+                await ctx.send(f"Failed to add due to mode. Change mode with 'changemode'")
         else:
             if (track := await self.choose_track(ctx, tracks)) is not None:
-                self.queue.add(track)
-                await ctx.send(f"Added {track} to the queue.")
+                if not (skipped := self.queue.add(insert, track)):
+                    await ctx.send(f"Added {track} to the queue.")
+                else:
+                    await ctx.send(f"Failed to add due to mode. Change mode with 'changemode'")
 
         if not player.is_playing() and not self.queue.is_empty:
             await player.play(self.queue.current_track)
@@ -566,7 +647,7 @@ class Music(commands.Cog):
         elif isinstance(exc, VolumeTooHigh):
             await ctx.send("The volume must be 150% or below.")
 
-    @volume_group.command(name="up")
+    @volume_group.command(name="up", hidden=True)
     async def volume_up_command(self, ctx):
         player = self.get_player(ctx.guild)
 
@@ -581,7 +662,7 @@ class Music(commands.Cog):
         if isinstance(exc, MaxVolume):
             await ctx.send("The player is already at max volume.")
 
-    @volume_group.command(name="down")
+    @volume_group.command(name="down", hidden=True)
     async def volume_down_command(self, ctx):
         player = self.get_player(ctx.guild)
 
@@ -596,7 +677,7 @@ class Music(commands.Cog):
         if isinstance(exc, MinVolume):
             await ctx.send("The player is already at min volume.")
 
-    @commands.command(name="lyrics")
+    @commands.command(name="lyrics", hidden=True)
     async def lyrics_command(self, ctx, name: t.Optional[str]):
         player = self.get_player(ctx.guild)
         name = name or self.queue.current_track.title
@@ -626,7 +707,7 @@ class Music(commands.Cog):
         if isinstance(exc, NoLyricsFound):
             await ctx.send("No lyrics could be found.")
 
-    @commands.command(name="eq")
+    @commands.command(name="eq", hidden=True)
     async def eq_command(self, ctx, preset: str):
         player = self.get_player(ctx.guild)
 
@@ -642,7 +723,7 @@ class Music(commands.Cog):
         if isinstance(exc, InvalidEQPreset):
             await ctx.send("The EQ preset must be either 'flat', 'boost', 'metal', or 'piano'.")
 
-    @commands.command(name="adveq", aliases=["aeq"])
+    @commands.command(name="adveq", aliases=["aeq"], hidden=True)
     async def adveq_command(self, ctx, band: int, gain: float):
         player = self.get_player(ctx.guild)
 
@@ -680,18 +761,18 @@ class Music(commands.Cog):
         embed = discord.Embed(
             title="Now playing",
             colour=ctx.author.colour,
-            timestamp=dt.datetime.utcnow(),
+            timestamp=dt.datetime.now(),
         )
         embed.set_author(name="Playback Information")
-        embed.set_footer(text=f"Requested by {ctx.author.display_name}", icon_url=ctx.author.avatar_url)
+        embed.set_footer(text=f"Requested by {ctx.author.display_name}", icon_url=ctx.author.avatar)
         embed.add_field(name="Track title", value=self.queue.current_track.title, inline=False)
         embed.add_field(name="Artist", value=self.queue.current_track.author, inline=False)
 
-        position = divmod(player.position, 60000)
-        length = divmod(self.queue.current_track.length, 60000)
+        position = divmod(player.position, 60)
+        length = divmod(self.queue.current_track.length, 60)
         embed.add_field(
             name="Position",
-            value=f"{int(position[0])}:{round(position[1]/1000):02}/{int(length[0])}:{round(length[1]/1000):02}",
+            value=f"{int(position[0]):02}:{round(position[1]):02}/{int(length[0])}:{round(length[1]):02}",
             inline=False
         )
 
@@ -738,7 +819,7 @@ class Music(commands.Cog):
         if isinstance(exc, QueueIsEmpty):
             await ctx.send("There are no tracks in the queue.")
 
-    @commands.command(name="seek")
+    @commands.command(name="seek", hidden=True)
     async def seek_command(self, ctx, position: str):
         player = self.get_player(ctx.guild)
 
