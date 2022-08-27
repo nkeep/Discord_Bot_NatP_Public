@@ -2,12 +2,15 @@ from discord.ext.commands import Cog
 from discord.ext.commands import command
 from discord import File
 from difflib import get_close_matches
+import datetime as dt
 from typing import Optional
 from PIL import Image
 from PIL import ImageFont
 from PIL import ImageDraw
 import deeppyer
 import requests
+import asyncio
+import discord
 import shutil
 import uuid
 import math
@@ -26,6 +29,14 @@ THIS_FOLDER = os.path.dirname(os.path.abspath(__file__))
 files = os.path.join(THIS_FOLDER, ".." + path_separator + "files" + path_separator)
 templates = os.path.join(THIS_FOLDER, ".." + path_separator + "files" + path_separator + "templates" + path_separator)
 
+OPTIONS = {
+    "1️⃣": 0,
+    "2⃣": 1,
+    "3⃣": 2,
+    "4⃣": 3,
+    "5⃣": 4,
+}
+
 class Meme(Cog):
     def __init__(self, bot):
     	self.bot = bot
@@ -37,8 +48,9 @@ class Meme(Cog):
             try:
                 meme_names = db.column("SELECT title FROM memes")
                 matches = get_close_matches(message[0], meme_names, 5, 0)
-                print(matches[0])
-                meme_id = db.record(f"SELECT meme_id FROM memes WHERE title='{matches[0]}'")[0]
+
+                meme = await self.choose_meme(ctx, matches)
+                meme_id = db.record(f"SELECT meme_id FROM memes WHERE title='{meme}'")[0]
                 params = {
                     'username':"nkeep",
                     'password':IMGFLIP_PASSWORD,
@@ -52,6 +64,41 @@ class Meme(Cog):
                 await ctx.send("Something went wrong, prob the api being dumb")
         else:
             await ctx.send("Need 3 arguments separated by ';'")
+
+    async def choose_meme(self, ctx, memes):
+        def _check(r, u):
+            return (
+                r.emoji in OPTIONS.keys()
+                and u == ctx.author
+                and r.message.id == msg.id
+            )
+
+        embed = discord.Embed(
+            title="Choose a song",
+            description=(
+                "\n".join(
+                    f"**{i+1}.** {t}"
+                    for i, t in enumerate(memes[:5])
+                )
+            ),
+            colour=ctx.author.colour,
+            timestamp=dt.datetime.now()
+        )
+        embed.set_author(name="Query Results")
+        embed.set_footer(text=f"Invoked by {ctx.author.display_name}", icon_url=ctx.author.avatar)
+
+        msg = await ctx.send(embed=embed)
+        for emoji in list(OPTIONS.keys())[:min(len(memes), len(OPTIONS))]:
+            await msg.add_reaction(emoji)
+
+        try:
+            reaction, _ = await self.bot.wait_for("reaction_add", timeout=60.0, check=_check)
+        except asyncio.TimeoutError:
+            await msg.delete()
+            await ctx.message.delete()
+        else:
+            await msg.delete()
+            return memes[OPTIONS[reaction.emoji]]
 
     @command(name="deepfry")
     async def deepfry(self, ctx):

@@ -10,6 +10,7 @@ from ..db import db
 
 server_status = 0
 ansi_escape = re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])')
+skip_one_cron_cycle = False
 
 
 class MC(Cog):
@@ -31,7 +32,9 @@ class MC(Cog):
 
     async def check_status(self):
         global server_status
-        if server_status == 0:
+        global skip_one_cron_cycle
+        if server_status == 0 or skip_one_cron_cycle == True:
+            skip_one_cron_cycle = False
             return
         else:
             players = pexpect.run('/home/nkeep/mcrcon/mcrcon -H 0.0.0.0 -p bananabread -w 5 "list"')
@@ -46,6 +49,7 @@ class MC(Cog):
     @command(name="mcstart")
     async def mcstart(self, ctx):
         global server_status
+        global skip_one_cron_cycle
         if server_status == 0:
             try:
                 await ctx.send("Starting mc server")
@@ -65,6 +69,7 @@ class MC(Cog):
                 child.sendline('\001d')
                 child.terminate()
 
+                skip_one_cron_cycle = True
                 await ctx.send("mc server started")
             except:
                 await ctx.send("Failed to start server")
@@ -95,10 +100,12 @@ class MC(Cog):
     @command(name="mcweatherclear", aliases=["mcwc", "mctoggledownfall"])
     async def mcweatherclear(self, ctx):
         await mc_command(ctx, "weather clear")
+        await ctx.send("Cleared weather")
 
     @command(name="mctimeset0", aliases=["mcts0", "mctimesetday", "mctsd"])
     async def mctimeset0(self, ctx):
         await mc_command(ctx, "time set 0")
+        await ctx.send("Set time to 0")
 
     @Cog.listener()
     async def on_ready(self):
@@ -114,6 +121,6 @@ async def mc_command(ctx, command):
         try:
             pexpect.run(f'/home/nkeep/mcrcon/mcrcon -H 0.0.0.0 -p bananabread -w 5 "{command}"')
         except:
-            await ctx.send("Failed to clear weather")
+            await ctx.send("Failed to send command")
     else:
         await ctx.send("Server must be running to use this command. Use mcstart to start server")

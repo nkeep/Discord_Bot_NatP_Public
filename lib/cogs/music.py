@@ -145,12 +145,11 @@ class Queue:
     def add(self, insert, *args):
         skipped_songs = 0
         for i in range(len(args)):
-            index = len(args) - i - 1
-            if args[index].length < (60* self.mode.value):
+            if args[i].length < (60* self.mode.value):
                 if insert:
                     self._queue.insert(self.position + 1, args[0])
                 else:
-                    self._queue.append(args[index])
+                    self._queue.append(args[i])
             else:
                 skipped_songs += 1
         return skipped_songs
@@ -407,9 +406,11 @@ class Music(commands.Cog):
 
         else:
             query = query.strip("<>")
-            if not re.match(URL_REGEX, query) or "playlist?list=" in query:
+            if not re.match(URL_REGEX, query):
                 tracks = await wavelink.YouTubeTrack.search(query=query)
                 tracks = [track for track in tracks if track.length < (self.queue.mode.value * 60)]
+            if "playlist?list=" in query:
+                tracks = await wavelink.YouTubeTrack.search(query=query)
             else:
                 tracks = [await wavelink.YouTubeTrack.search(query=query, return_first=True)]
                 
