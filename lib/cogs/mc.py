@@ -107,6 +107,12 @@ class MC(Cog):
         await mc_command(ctx, "time set 0")
         await ctx.send("Set time to 0")
 
+    @command(name="mccommand", aliases=["mc"], hidden=True)
+    async def mccommand(self, ctx, *, command):
+        if ctx.author.id == 143919895694802944:
+            await mc_command(ctx, command)
+            await ctx.send("Success")
+
     @Cog.listener()
     async def on_ready(self):
         if not self.bot.ready:
