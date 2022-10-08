@@ -59,6 +59,9 @@ def readings(reading: Reading):
 
     reading_title = soup.find("h3", class_="name", string=reading.value)
 
+    if not reading_title:
+        reading_title = soup.find("h3", class_="name", string=reading.value.replace("1","I").replace("2","II"))
+
     book=reading_title.find_next_sibling().get_text()
     reading = reading_title.parent.find_next_sibling()
     for br in reading.find_all("br"):
