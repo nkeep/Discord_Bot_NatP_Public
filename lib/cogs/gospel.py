@@ -67,6 +67,4 @@ def readings(reading: Reading):
     for br in reading.find_all("br"):
         br.replace_with("\n")
 
-    reading = reading.replace("\n\n","\n")
-
-    return ("**" + book.strip() + "**" + "\n" + reading.get_text().strip())
+    return ("**" + book.strip() + "**" + "\n" + reading.get_text().strip().replace("\n\n","\n"))
