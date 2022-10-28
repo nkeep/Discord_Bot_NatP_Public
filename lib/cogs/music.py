@@ -369,7 +369,7 @@ class Music(commands.Cog):
     @commands.command(name="changemode", aliases=["mode", "setmode", "musicmode"])
     async def changemode(self, ctx, mode: Optional[str]):
         if mode == None:
-            await ctx.send(str(self.queue.mode.value) + " minute mode")
+            await ctx.send("Current mode: " + str(self.queue.mode.value) + " minute mode" + "\n" + "Available modes: 10, 30, all")
             return
         if mode.startswith("10") or mode.lower().startswith("ten"):
             self.queue.mode = Mode.TEN_MIN
@@ -409,11 +409,12 @@ class Music(commands.Cog):
             if not re.match(URL_REGEX, query):
                 tracks = await wavelink.YouTubeTrack.search(query=query)
                 tracks = [track for track in tracks if track.length < (self.queue.mode.value * 60)]
-            if "playlist?list=" in query:
-                tracks = await wavelink.YouTubeTrack.search(query=query)
+            elif "list=" in query:
+                tracks = await self.node.get_playlist(cls=wavelink.YouTubePlaylist, identifier=query)
             else:
-                tracks = [await wavelink.YouTubeTrack.search(query=query, return_first=True)]
-                
+                if "youtu.be/" in query:
+                    query = query.replace("youtu.be/","www.youtube.com/watch?v=")
+                tracks = await self.node.get_tracks(cls=wavelink.YouTubeTrack, query=query)
             await self.add_tracks(ctx, tracks)
 
     @commands.command(name="playtop")
@@ -436,13 +437,14 @@ class Music(commands.Cog):
 
         else:
             query = query.strip("<>")
-            if "playlist?list=" in query:
+            if "list=" in query:
                 await ctx.send("Can't add a playlist with playtop")
             elif not re.match(URL_REGEX, query):
                 tracks = await wavelink.YouTubeTrack.search(query=query)
             else:
-                tracks = [await wavelink.YouTubeTrack.search(query=query, return_first=True)]
-
+                if "youtu.be/" in query:
+                    query = query.replace("youtu.be/","www.youtube.com/watch?v=")
+                tracks = await self.node.get_tracks(cls=wavelink.YouTubeTrack, query=query)
             await self.add_tracks(ctx, tracks, insert=True)
 
     async def add_tracks(self, ctx, tracks, insert=False):
