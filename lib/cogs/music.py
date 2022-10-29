@@ -598,19 +598,25 @@ class Music(commands.Cog):
 
     @commands.command(name="queue", aliases=["q"])
     async def queue_command(self, ctx, show: t.Optional[int] = 10):
+        def _check(r, u):
+            return (
+                r.emoji == "⬅️" or r.emoji == "➡️"
+                and u == ctx.author
+                and r.message.id == msg.id
+            )
         player = self.get_player(ctx.guild)
+
+        page = 0
 
         if self.queue.is_empty:
             raise QueueIsEmpty
 
         embed = discord.Embed(
             title="Queue",
-            description=f"Showing up to next {show} tracks",
-            colour=ctx.author.colour,
-            timestamp=dt.datetime.utcnow()
+            description=f"Showing up to next {show} tracks (" + str(len(self.queue.upcoming)) + " total)",
+            colour=ctx.author.colour
         )
-        embed.set_author(name="Query Results")
-        embed.set_footer(text=f"Requested by {ctx.author.display_name}", icon_url=ctx.author.avatar)
+        embed.set_footer(text=f"Page {str(page+1)}")
         embed.add_field(
             name="Currently playing",
             value=getattr(player.track, "title", "No tracks currently playing."),
@@ -619,16 +625,52 @@ class Music(commands.Cog):
         if upcoming := self.queue.upcoming:
             embed.add_field(
                 name="Next up",
-                value="\n".join(str(i+1) + ". " + t.title for i, t in enumerate(upcoming[:show])),
+                value="\n".join(str(i+1) + ". " + t.title for i, t in enumerate(upcoming[page:show])),
                 inline=False
             )
 
         msg = await ctx.send(embed=embed)
+        await msg.add_reaction("⬅️")
+        await msg.add_reaction("➡️")
+        
+        while(True):
+            try:
+                reaction, user = await self.bot.wait_for("reaction_add", timeout=30.0, check=_check)
+            except:
+                break
+            else:
+                await msg.remove_reaction(reaction, user)
+                if reaction.emoji == "⬅️" and page > 0:
+                    page -= 1
+                elif reaction.emoji == "➡️" and (show*(page+1)) < len(self.queue.upcoming):
+                    page += 1
+                else:
+                    pass
+                #Could put this in a function perhaps
+                embed = discord.Embed(
+                    title="Queue",
+                    description=f"Showing up to next {show} tracks (" + str(len(self.queue.upcoming)) + " total)",
+                    colour=ctx.author.colour
+                )
+                embed.set_footer(text=f"Page {str(page+1)}")
+                embed.add_field(
+                    name="Currently playing",
+                    value=getattr(player.track, "title", "No tracks currently playing."),
+                    inline=False
+                )
+                if upcoming := self.queue.upcoming:
+                    embed.add_field(
+                        name="Next up",
+                        value="\n".join(str(i+1+(page*show)) + ". " + t.title for i, t in enumerate(upcoming[(page*show):show*(page + 1)])),
+                        inline=False
+                    )
+                msg = await msg.edit(embed=embed)
 
     @queue_command.error
     async def queue_command_error(self, ctx, exc):
         if isinstance(exc, QueueIsEmpty):
             await ctx.send("The queue is currently empty.")
+
 
     # Requests -----------------------------------------------------------------
 
