@@ -363,6 +363,7 @@ class Music(commands.Cog):
     @commands.command(name="disconnect", aliases=["leave"])
     async def disconnect_command(self, ctx):
         player = self.get_player(ctx.guild)
+        self.queue.empty()
         await player.disconnect()
         await ctx.send("Disconnected.")
 
@@ -532,7 +533,7 @@ class Music(commands.Cog):
         if isinstance(exc, PlayerIsAlreadyPaused):
             await ctx.send("Already paused.")
 
-    @commands.command(name="stop")
+    @commands.command(name="stop", aliases=["clear"])
     async def stop_command(self, ctx):
         player = self.get_player(ctx.guild)
         self.queue.empty()
@@ -543,10 +544,11 @@ class Music(commands.Cog):
     async def next_command(self, ctx):
         player = self.get_player(ctx.guild)
 
+        await player.stop()
+
         if not self.queue.upcoming:
             raise NoMoreTracks
-
-        await player.stop()
+        
         await ctx.send("Playing next track in queue.")
 
     @next_command.error
@@ -594,7 +596,7 @@ class Music(commands.Cog):
         self.queue.set_repeat_mode(mode)
         await ctx.send(f"The repeat mode has been set to {mode}.")
 
-    @commands.command(name="queue")
+    @commands.command(name="queue", aliases=["q"])
     async def queue_command(self, ctx, show: t.Optional[int] = 10):
         player = self.get_player(ctx.guild)
 
@@ -617,7 +619,7 @@ class Music(commands.Cog):
         if upcoming := self.queue.upcoming:
             embed.add_field(
                 name="Next up",
-                value="\n".join(t.title for t in upcoming[:show]),
+                value="\n".join(str(i+1) + ". " + t.title for i, t in enumerate(upcoming[:show])),
                 inline=False
             )
 
@@ -796,7 +798,7 @@ class Music(commands.Cog):
         if not 0 <= index <= self.queue.length:
             raise NoMoreTracks
 
-        self.queue.position = index - 2
+        self.queue.position = index - 1
         await player.stop()
         await ctx.send(f"Playing track in position {index}.")
 
@@ -806,6 +808,11 @@ class Music(commands.Cog):
             await ctx.send("There are no tracks in the queue.")
         elif isinstance(exc, NoMoreTracks):
             await ctx.send("That index is out of the bounds of the queue.")
+        
+    @commands.command(name="replace")
+    async def replace(self, ctx, query):
+        await ctx.invoke(self.bot.get_command('playtop'), query=query)
+        await ctx.invoke(self.bot.get_command('skip'))
 
     @commands.command(name="restart")
     async def restart_command(self, ctx):
