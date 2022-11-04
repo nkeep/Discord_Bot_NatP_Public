@@ -60,6 +60,7 @@ class NBA(Cog):
                     break
                 else:
                     is_currently_watching = False
+                    await self.bot.change_presence(status=None)
 
     @Cog.listener()
     async def on_ready(self):
@@ -67,4 +68,5 @@ class NBA(Cog):
             self.bot.cogs_ready.ready_up("nba")
 
 async def setup(bot):
+    await bot.change_presence(status=None)
     await bot.add_cog(NBA(bot))
