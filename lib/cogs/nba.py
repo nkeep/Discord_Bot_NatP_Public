@@ -27,7 +27,6 @@ class NBA(Cog):
     async def check_for_games(self):
         global is_currently_watching
         if is_currently_watching or datetime.datetime.now().minute in [1,16,31,46]: #Only check every 15 minutes unless a game is happening
-            print('ran')
             soup = BeautifulSoup(requests.get("https://www.cbssports.com/nba/schedule/").text, "lxml")
             games_table_wrapper = soup.find_all("div", "TableBaseWrapper") 
             upcoming_games = games_table_wrapper[-1] #Current and upcoming games
@@ -43,6 +42,8 @@ class NBA(Cog):
                 team1 = cells[0].find("span", "TeamName").a.text
                 team2 = cells[1].find("span", "TeamName").a.text
                 score_or_time = cells[2].find("div", "CellGame").a.text
+                if re.search("\d{1,2}:\d{2} (am|pm)", score_or_time):
+                    continue
                 for i in range(len(teams_to_watch)):
                     if teams_to_watch[i] == team1 and i < top_prio_game:
                         top_prio_game = i
