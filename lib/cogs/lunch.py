@@ -36,9 +36,13 @@ async def lunchbuglist(interaction: discord.Interaction):
         if issue["state"] == "open":
             issuesText += "[" + str(numIssues+1) + ". " + issue["title"] + "](" + issue["html_url"] + ")" + "\n"
             numIssues += 1
-    embed = discord.Embed()
-    embed.description = issuesText
-    await interaction.response.send_message(embed=embed)
+
+    if issuesText == "":
+        await interaction.response.send_message("No open bugs")
+    else:
+        embed = discord.Embed()
+        embed.description = issuesText
+        await interaction.response.send_message(embed=embed)
 
 class Lunch_Bug(ui.Modal, title="Lunch Bug Report"):
     bugTitle = ui.TextInput(label="Title", style=discord.TextStyle.short)
