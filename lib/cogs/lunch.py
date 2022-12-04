@@ -17,7 +17,7 @@ async def lunchbug(interaction: discord.Interaction):
 
 @app_commands.command(name="lunchbuglist")
 async def lunchbuglist(interaction: discord.Interaction):
-    url = f'https://api.github.com/repos/nkeep/Auto_PTCGO/issues'
+    url = f'https://api.github.com/repos/nkeep/Lunch_Unity/issues'
     headers = {
         'Accept': 'application/vnd.github+json',
         'Authorization': f'Bearer {GIT_KEY}'
@@ -45,7 +45,7 @@ class Lunch_Bug(ui.Modal, title="Lunch Bug Report"):
     description = ui.TextInput(label="Description", style=discord.TextStyle.long, placeholder="Please describe in detail the bug and how to reproduce if necessary")
     
     async def on_submit(self, interaction: discord.Interaction):
-        url = f'https://api.github.com/repos/nkeep/Auto_PTCGO/issues'
+        url = f'https://api.github.com/repos/nkeep/Lunch_Unity/issues'
         headers = {
             'Accept': 'application/vnd.github+json',
             'Authorization': f'Bearer {GIT_KEY}'
