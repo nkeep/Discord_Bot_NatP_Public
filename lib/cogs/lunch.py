@@ -12,7 +12,7 @@ async def lunchbug(interaction: discord.Interaction):
     await interaction.response.send_modal(Lunch_Bug())
 
 @app_commands.command(name="lunchonline")
-async def lunchbug(interaction: discord.Interaction):
+async def lunchonline(interaction: discord.Interaction):
     await interaction.response.send_message("https://lunch.natekeep.com")
 
 @app_commands.command(name="lunchbuglist")
