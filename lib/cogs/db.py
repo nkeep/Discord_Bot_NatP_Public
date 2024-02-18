@@ -62,13 +62,14 @@ class DB(Cog):
                     url = ctx.message.attachments[0].url
                     if url[0:26] == "https://cdn.discordapp.com":
                         r = requests.get(url, stream=True)
-                        fileName = str(uuid.uuid4()) + "." + str(url.split('.')[-1])
+                        fileName = ctx.message.attachments[0].filename
                         with open(files + fileName, 'wb') as out_file:
                             shutil.copyfileobj(r.raw, out_file)
                             db.execute(f"INSERT INTO db VALUES('{first}','{files + fileName}', 1, {ctx.message.author.id}, 0)")
                             db.commit()
                             await ctx.send("successfully added command")
-                except:
+                except Exception as e:
+                    print(e)
                     print("upload failed")
             else:
                 await ctx.send("Invalid syntax")
